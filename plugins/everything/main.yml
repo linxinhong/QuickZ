@@ -1,0 +1,14 @@
+name: everything
+winClass: EVERYTHING
+winExe: everything.exe
+source: ./everything.ahk
+maxCount: 100
+timeOut: 0
+mode:
+  normal:
+    j: down
+    u: up
+    h: left
+    l: right
+  insert:
+    <esc>: ev_change_to_normal
