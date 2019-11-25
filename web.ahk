@@ -2,13 +2,23 @@
 #SingleInstance, force
 SetBatchLines, -1
 
-QZM.Listen(A_ScriptDir "\ui", 8001)
+QZM.Listen(A_ScriptDir "\ui", 5210)
 
 return
 
 Class QZM {
 
-    static _instance := new QZM()
+    static _instance := new QZM.instance()
+
+    class instance {
+        __new() {
+            this.rootdir := dir
+            this.config := A_ScriptDir "\user\config.json"
+            this.port := 0
+            this.paths := {}
+            this.server := {}
+        }
+    }
 
     Listen(dir, port:=8000) {
         QZM._instance.rootdir := dir
@@ -16,13 +26,9 @@ Class QZM {
         QZM._instance.server := new HttpServer()
         QZM._instance.server.LoadMimes(A_ScriptDir . "/lib/mime.types")
         QZM._instance.server.serve(port)
-        QZM.LoadAPI()
         QZM.LoadFiles()
+        QZM.LoadAPI()
         QZM._instance.server.SetPaths(QZM._instance.paths)
-    }
-
-    LoadAPI() {
-        QZM._instance.paths["/API/"] := objBindMethod(QZM, "API")
     }
 
     LoadFiles() {
@@ -30,9 +36,6 @@ Class QZM {
         {
             QZM._instance.paths[StrReplace(SubStr(PathRelativeTo(A_LoopFileFullPath, QZM._instance.rootdir), 2), "\", "/")] := objBindMethod(QZM, "File")
         }
-    }
-
-    API(ByRef req, ByRef res, ByRef server) {
     }
 
     File(ByRef req, ByRef res, ByRef server) {
@@ -47,14 +50,37 @@ Class QZM {
         }
     }
 
-    class instance {
-        __new() {
-            this.rootdir := dir
-            this.port := 0
-            this.paths := {}
-            this.server := {}
+    LoadAPI() {
+        QZM._instance.paths["/api/config"] := objBindMethod(QZM, "API")
+    }
+
+    /*
+        /api/manager/start
+        /api/manager/stop
+        /api/config
+    */
+
+    API(ByRef req, ByRef res, ByRef server) {
+        if (req.path == "/api/config") {
+            if (req.method == "GET") {
+                if (not FileExist(QZM._instance.config)) {
+                    body := json.dump({})
+                    FileAppend, % body , % QZM._instance.config
+                }
+                else {
+                    FileRead, body, % QZM._instance.config
+                }
+                res.SetBodyText(body)
+                res.status := 200
+            }
+            else if (req.method == "POST") {
+                FileDelete, % QZM._instance.config
+                FileAppend, % req.body , % QZM._instance.config
+                res.status := 200
+            }
         }
     }
+
 }
 
 !z::reload
