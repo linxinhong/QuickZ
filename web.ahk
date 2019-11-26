@@ -16,6 +16,7 @@ Class QZM {
             this.config := A_ScriptDir "\user\config.json"
             this.port := 0
             this.paths := {}
+            this.routes := {}
             this.server := {}
         }
     }
@@ -29,6 +30,7 @@ Class QZM {
         QZM.LoadFiles()
         QZM.LoadAPI()
         QZM._instance.server.SetPaths(QZM._instance.paths)
+        QZM._instance.server.SetRoutes(QZM._instance.routes)
     }
 
     LoadFiles() {
@@ -50,14 +52,23 @@ Class QZM {
         }
     }
 
+    BrowseFile(byRef req, byRef res, byRef server) {
+
+    }
+
+    GenerateIcon(filePath) {
+
+    }
+
     LoadAPI() {
-        QZM._instance.paths["/api/config"] := objBindMethod(QZM, "API")
+        QZM._instance.routes["/api"] := objBindMethod(QZM, "API")
     }
 
     /*
         /api/manager/start
         /api/manager/stop
         /api/config
+        /api/geticon
     */
 
     API(ByRef req, ByRef res, ByRef server) {
@@ -79,6 +90,7 @@ Class QZM {
                 res.status := 200
             }
         }
+        res.NotFound()
     }
 
 }

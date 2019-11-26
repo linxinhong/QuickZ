@@ -72,8 +72,19 @@ class HttpServer
         this.paths := paths
     }
 
+    SetRoutes(routes) {
+        this.routes := routes
+    }
+
     Handle(ByRef request) {
         response := new HttpResponse()
+        for path , func in this.routes {
+            match := "^" ToMatch(path)
+            if (RegExMatch(request.path,match)) {
+                func.(request, response, this)
+                return response
+            }
+        }
         if (!this.paths[request.path]) {
             func := this.paths["404"]
             response.status := 404
@@ -256,6 +267,11 @@ class HttpResponse
     SetBodyText(text) {
         this.body := Buffer.FromString(text)
         this.headers["Content-Length"] := this.body.length
+    }
+
+    NotFound() {
+        this.SetBodyText("not found")
+        this.status := 404
     }
 
 }
