@@ -24,6 +24,7 @@ vimd.map("et", "normal", "v5", "et_filter", "可执行文件")
 vimd.map("et", "normal", "v6", "et_filter", "文件夹")
 vimd.map("et", "normal", "v7", "et_filter", "图片")
 vimd.map("et", "normal", "v8", "et_filter", "视频")
+vimd.map("et", "normal", ".", objBindMethod(vimd, "repeat"), "视频")
 vimd.map("et", "insert", "<esc>", "np_change_to_normal")
 vimd.changeMode("et", "normal")
 
@@ -56,7 +57,7 @@ menuz.config({cliptimeout: 400
     ,onGetWin: ""
     ,onGetClip: "checktc"})
 ; menuz.SetFilter("ext", "filtertest")
-; menuz.Setexec("gvim", "exectest")
+menuz.setexec("sendtext", "sendtext")
 menuz.settag("test", "tagtest")
 menuz.setvar("gvim", "D:\Program Files (x86)\Vim\vim81\gvim.exe")
 menuz.setvar("chrome", "C:\chrmoe.exe")
@@ -66,6 +67,11 @@ menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
 tagtest(env, tag) {
     msgbox % tag ; {test: some}
     msgbox % env.file.name
+}
+
+sendtext(env, item) {
+    WinActivate, % "ahk_id " env.winHwnd
+    SendRaw % item.param
 }
 
 checktc(env) {
@@ -96,6 +102,10 @@ myMenu :=   [{name: "<firstmenu>"}
             ,icon: "%vscode%:0"
             ,exec: "%vscode%"
             ,param: """D:\git\ahk\quickz-design"""}
+        ,{name: "切换到quickz-design"
+          ,exec: "<sendtext>"
+          ,param: "cd /d D:\git\ahk\quickz-design"
+          ,filter: "{winexe:=cmd.exe}"}
         ,{ name: "父菜单1"
                 ,sub:   [{name: "1"
                                 ,sub: [{name: "1.1"}]}

@@ -363,7 +363,7 @@
 
             this.x := 0
             this.y := 0
-            this.hwnd := 0
+            this.winHwnd := 0
             this.winClass := ""
             this.winExe := ""
             this.winExeFullPath := ""
@@ -445,7 +445,7 @@
                 WinGet, _ExeFullPath, ProcessPath, ahk_id %_ID%
                 this.x := _PosX
                 this.y := _PosY
-                this.hwnd := _ID
+                this.winHwnd := _ID
                 this.winClass := _Class
                 this.winExe := _Exe
                 this.winExeFullPath := _ExeFullPath

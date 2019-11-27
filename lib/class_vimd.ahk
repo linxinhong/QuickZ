@@ -162,6 +162,10 @@
 
     DoAction(actionName, count) {
         win := vimd.ActiveWin()
+        if ( not vimd._instance.isRepeat ) {
+            win.SetKeyHistory(win.keyCache, actionName, count)
+        }
+        ; win.GetKeyHistory()
         if (IsFunc(win.onBeforeAction)) {
             Func(win.onBeforeAction).call(win)
         }
@@ -181,9 +185,22 @@
                 actionName.call()
             }
         }
+        if ( vimd._instance.isRepeat ) {
+            vimd._instance.isRepeat := false
+        }
+        else {
+            win.SetLastAction(actionName, count)
+        }
         if (IsFunc(win.onAfterAction)) {
             Func(win.onAfterAction).call(win)
         }
+    }
+
+    Repeat() {
+        win := vimd.ActiveWin()
+        vimd._instance.isRepeat := true
+        vimd.DoAction(win.LastAction.action, win.LastAction.count)
+        vimd._instance.isRepeat := true
     }
 
     Timer(key) {
@@ -335,6 +352,7 @@
             this.winClassList := {}
             this.winExeList := {}
             this.commentList := {}
+            this.isRepeat := false
             this.DictVimKey := {"<LButton>":"LButton", "<RButton>":"RButton", "<MButton>":"MButton"
             ,"<XButton1>":"XButton1",   "<XButton2>":"XButton2"
             ,"<WheelDown>":"WheelDown", "<WheelUp>":"WheelUp"
@@ -398,6 +416,8 @@
             this.keyLast := ""
             this.count := 0
             this.SendRawOnce := false
+            this.KeyHistoryList := {}
+            this.LastAction := {}
             ; event list
             this.onMap := config.onMap
             this.onChangeMode := config.onChangeMode
@@ -485,6 +505,24 @@
             else {
                 Tooltip
             }
+        }
+
+        SetKeyHistory(key, action, count) {
+            this.KeyHistoryList.push({key: key, action: action, count: (count < 1 ? 1 : count)})
+        }
+
+        GetKeyHistory() {
+            tip := ""
+            for step, history in this.KeyHistoryList
+            {
+                tip .= "Key: " history.key A_Tab "Action: " history.action A_Tab "Count: " history.count "`n"
+            }
+            ; tooltip %tip%, , , 2
+            return tip
+        }
+
+        SetLastAction(action, count) {
+            this.LastAction := {action: action, count: count}
         }
     }
 
