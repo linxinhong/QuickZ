@@ -24,7 +24,9 @@ vimd.map("et", "normal", "v5", "et_filter", "可执行文件")
 vimd.map("et", "normal", "v6", "et_filter", "文件夹")
 vimd.map("et", "normal", "v7", "et_filter", "图片")
 vimd.map("et", "normal", "v8", "et_filter", "视频")
-vimd.map("et", "normal", ".", objBindMethod(vimd, "repeat"), "视频")
+vimd.map("et", "normal", ".", objBindMethod(vimd, "repeat"), "重复操作")
+vimd.map("et", "normal", "q", objBindMethod(vimd, "record"), "录制宏")
+vimd.map("et", "normal", "p", objBindMethod(vimd, "recordplay"), "播放宏")
 vimd.map("et", "insert", "<esc>", "np_change_to_normal")
 vimd.changeMode("et", "normal")
 
@@ -106,6 +108,9 @@ myMenu :=   [{name: "<firstmenu>"}
           ,exec: "<sendtext>"
           ,param: "cd /d D:\git\ahk\quickz-design"
           ,filter: "{winexe:=cmd.exe}"}
+        ,{name: "编辑配置"
+            ,exec: "%gvim%"
+            ,param: "D:\git\ahk\quickz-design\quickz.ahk"}
         ,{ name: "父菜单1"
                 ,sub:   [{name: "1"
                                 ,sub: [{name: "1.1"}]}

@@ -162,10 +162,10 @@
 
     DoAction(actionName, count) {
         win := vimd.ActiveWin()
-        if ( not vimd._instance.isRepeat ) {
+        if ( not win.isRepeat or not win.isRecordPlay) {
             win.SetKeyHistory(win.keyCache, actionName, count)
         }
-        ; win.GetKeyHistory()
+        ;win.GetKeyHistory()
         if (IsFunc(win.onBeforeAction)) {
             Func(win.onBeforeAction).call(win)
         }
@@ -178,15 +178,15 @@
             }
         } else if (IsLabel(actionName)) {
             Loop %count% {
-                Func(actionName).call()
+                Goto, %actionName%
             }
         } else if (IsObject(actionName)) {
             Loop %count% {
-                actionName.call()
+                actionName.call(win)
             }
         }
-        if ( vimd._instance.isRepeat ) {
-            vimd._instance.isRepeat := false
+        if ( win.isRepeat ) {
+            win.isRepeat := false
         }
         else {
             win.SetLastAction(actionName, count)
@@ -198,9 +198,35 @@
 
     Repeat() {
         win := vimd.ActiveWin()
-        vimd._instance.isRepeat := true
+        win.isRepeat := true
         vimd.DoAction(win.LastAction.action, win.LastAction.count)
-        vimd._instance.isRepeat := true
+        win.isRepeat := true
+    }
+
+    Record() {
+        win := vimd.ActiveWin()
+        win.RecordToggle()
+    }
+
+    RecordPlay() {
+        win := vimd.ActiveWin()
+        record := win.RecordPlay()
+        if (record.start > 0 and record.end > 0 and record.end > record.start) {
+            win.isRecordPlay := true
+            step := record.start
+            Loop 
+            {
+                recordAction := win.KeyHistoryList[step]
+                vimd.DoAction(recordAction.action, recordAction.count)
+                step += 1
+                if (step > record.end) {
+                    break
+                }
+                ;tip .= "Action: " recordAction.action A_Tab "Count: " recordAction.count "`n"
+                ;tooltip %tip%, , , 3
+            }
+            win.isRecordPlay := false
+        }
     }
 
     Timer(key) {
@@ -352,7 +378,6 @@
             this.winClassList := {}
             this.winExeList := {}
             this.commentList := {}
-            this.isRepeat := false
             this.DictVimKey := {"<LButton>":"LButton", "<RButton>":"RButton", "<MButton>":"MButton"
             ,"<XButton1>":"XButton1",   "<XButton2>":"XButton2"
             ,"<WheelDown>":"WheelDown", "<WheelUp>":"WheelUp"
@@ -416,6 +441,11 @@
             this.keyLast := ""
             this.count := 0
             this.SendRawOnce := false
+            this.isRepeat := false
+            this.isRecord := false
+            this.isRecordPlay := false
+            this.RecordName := ""
+            this.RecordList := {}
             this.KeyHistoryList := {}
             this.LastAction := {}
             ; event list
@@ -517,12 +547,35 @@
             {
                 tip .= "Key: " history.key A_Tab "Action: " history.action A_Tab "Count: " history.count "`n"
             }
-            ; tooltip %tip%, , , 2
+            tooltip %tip%, , , 2
             return tip
         }
 
         SetLastAction(action, count) {
             this.LastAction := {action: action, count: count}
+        }
+
+        RecordToggle() {
+            if (this.isRecord) {
+                this.IsRecord := false
+                record := this.RecordList[this.RecordName]
+                record.end := this.KeyHistoryList.MaxIndex() -1
+            }
+            else {
+                InputBox, macroName, VimD 录制宏, 请输入宏的名称 
+                this.RecordName := macroName
+                record := {start: this.KeyHistoryList.MaxIndex() + 1, end: 0}
+                this.RecordList[this.RecordName] := record
+                this.IsRecord := true
+            }
+        }
+
+        RecordList() {
+        }
+
+        RecordPlay() {
+            InputBox, macroName, VimD 执行录制宏, 请输入宏的名称 
+            return this.RecordList[macroName]
         }
     }
 
