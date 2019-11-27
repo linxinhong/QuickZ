@@ -60,6 +60,7 @@ menuz.config({cliptimeout: 400
 menuz.settag("test", "tagtest")
 menuz.setvar("gvim", "D:\Program Files (x86)\Vim\vim81\gvim.exe")
 menuz.setvar("chrome", "C:\chrmoe.exe")
+menuz.setvar("vscode", "D:\Program Files\Microsoft VS Code\Code.exe")
 menuz.setvar("black", 0x232323)
 menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
 tagtest(env, tag) {
@@ -87,6 +88,14 @@ myMenu :=   [{name: "<firstmenu>"}
             ,param: """{file:path}"""
             ,workdir: """{file:dir}"""
             ,filter: "{ext:=ahk, js, py}, {only:file}"}
+        ,{name: "quickz-ui"
+            ,icon: "%vscode%:0"
+            ,exec: "%vscode%"
+            ,param: """D:\git\ahk\quickz-ui"""}
+        ,{name: "quickz-design"
+            ,icon: "%vscode%:0"
+            ,exec: "%vscode%"
+            ,param: """D:\git\ahk\quickz-design"""}
         ,{ name: "父菜单1"
                 ,sub:   [{name: "1"
                                 ,sub: [{name: "1.1"}]}
@@ -108,7 +117,7 @@ result := RegExMatch(string, match, m)
 msgbox % result "`n" m
 return
 
-!z::reload
+!x::reload
 !r::menuz.Active()
 
 #include lib\class_vimd.ahk
@@ -116,5 +125,5 @@ return
 #include lib\class_json.ahk
 #include lib\pum.ahk
 #include lib\pum_api.ahk
-#include lib\_struct.ahk
+#include lib\struct.ahk
 #include lib\sizeof.ahk

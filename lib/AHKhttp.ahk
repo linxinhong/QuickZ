@@ -65,7 +65,11 @@ class HttpServer
         f.Close()
 
         response.SetBody(data, length)
-        res.headers["Content-Type"] := this.GetMimeType(file)
+        response.headers["Content-Type"] := this.GetMimeType(file)
+    }
+
+    ServeRaw(ByRef response, rawdata) {
+        response.SetBody(rawdata, (rawdata))
     }
 
     SetPaths(paths) {
@@ -78,10 +82,12 @@ class HttpServer
 
     Handle(ByRef request) {
         response := new HttpResponse()
-        for path , func in this.routes {
-            match := "^" ToMatch(path)
+        Loop % this.routes.MaxIndex() 
+        {
+            route := this.routes[A_Index]
+            match := "^" ToMatch(route.path)
             if (RegExMatch(request.path,match)) {
-                func.(request, response, this)
+                route.func.(request, response, this)
                 return response
             }
         }
@@ -100,8 +106,7 @@ class HttpServer
     Serve(port) {
         this.port := port
         HttpServer.servers[port] := this
-
-        AHKsock_Listen(port, "HttpHandler")
+        AHKsock_Listen(port, "HttpHandler") 
     }
 }
 
@@ -239,7 +244,7 @@ class HttpResponse
     }
 
     Generate() {
-        FormatTime, date,, ddd, d MMM yyyy HH:mm:ss
+        FormatTime, date, L0x0409, ddd, d MMM yyyy HH:mm:ss GMT
         this.headers["Date"] := date
 
         headers := this.protocol . " " . this.status . "`r`n"

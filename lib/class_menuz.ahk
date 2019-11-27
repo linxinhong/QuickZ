@@ -304,6 +304,10 @@
                 name := env.text
             }
         }
+        else {
+            icon := env.winExeFullPath ":0"
+            name := env.winTitle
+        }
         item := {name: name
             ,uuid: objBindMethod(menuz, "FirstMenu_Run")
             ,icon: icon}
@@ -312,6 +316,9 @@
     }
 
     FirstMenu_Run(env, event, item) {
+        if (env.isWin) {
+            Run, % A_WinDir "\explorer.exe /select," env.winExeFullPath
+        }
     }
 
     GetIcon(filePath) {
@@ -359,6 +366,7 @@
             this.hwnd := 0
             this.winClass := ""
             this.winExe := ""
+            this.winExeFullPath := ""
             this.winControl := ""
             this.winTitle := ""
 
@@ -395,7 +403,7 @@
                     SendINput, ^c
                 }
                 ClipWait, % this.config.ClipTimeOut, 1
-                ErrorCode := not ErrorLevel
+                this.isWin := ErrorLevel
                 this.isFile := DllCall("IsClipboardFormatAvailable", "UInt", 15)
                 clipData := Clipboard
                 Clipboard := clipBackup
@@ -421,7 +429,7 @@
                         this.file := this.GetFileObject(files)
                     }
                 }
-                else {
+                else if (StrLen(clipData)) {
                     this.isText := true
                     this.text := clipData
                 }
@@ -434,11 +442,13 @@
                 WinGetTitle, _Title, ahk_id %_ID%
                 WinGetClass, _Class, ahk_id %_ID%
                 WinGet, _Exe,  ProcessName, ahk_id %_ID%
+                WinGet, _ExeFullPath, ProcessPath, ahk_id %_ID%
                 this.x := _PosX
                 this.y := _PosY
                 this.hwnd := _ID
                 this.winClass := _Class
                 this.winExe := _Exe
+                this.winExeFullPath := _ExeFullPath
                 this.winControl := _Ctrl
                 this.winTitle := _Title
                 this.IsGetWin := true
