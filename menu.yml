@@ -4,6 +4,10 @@
   gvim: D:\Program Files (x86)\Vim\vim81\gvim.exe
   vscode: D:\Program Files\Microsoft VS Code\Code.exe
   everything: C:\Program Files\Everything\Everything.exe
+
+filter:
+  textfile: ahk, js, py, yml, yaml, txt
+
 color:
   black: 0x232323
 
@@ -24,22 +28,35 @@ color:
 
 - name: "gvim>>"
   icon: %gvim%:0
-  tcolor: 0xffff
-  bgcolor: %black%
+  # tcolor: 0xffff
+  # bgcolor: %black%
   exec: %gvim%
   param: \"{file:path}\"
   workdir: \"file:dir}\"
-  filter: "{ext:=ahk, js, py, yml, yaml}, {only:file}"
+  filter: "{ext:=%textfile%}, {only:file}"
+
+- name: "VSCode打开"
+  icon: %VSCode%:0
+  exec: %vscode%
+  param: \"{file:path}\"
+  workdir: \"file:dir}\"
+  filter: "{only:file}"
+
+- name: "复制文件名"
+  exec: <copynamenoext>
+  filter: "{only:file}"
 
 - name: "quickz-ui"
   icon: %vscode%:0
   exec: %vscode%
   param: D:\git\ahk\quickz-ui
+  filter: "{pos:x>800 y>600}"
 
 - name: "quickz-design"
   icon: %vscode%:0
   exec: %vscode%
   param: D:\git\ahk\quickz-design
+  filter: "{pos:x>800 y>600}"
 
 - name: "切换到quickz-design"
   exec: <sendtext>
@@ -56,7 +73,7 @@ color:
 
 - name: "配置"
   sub:
-    - name: "编辑配置"
+    - name: "编辑菜单"
       exec: %gvim%
       param: D:\git\ahk\quickz-design\menu.yml
 

@@ -25,23 +25,26 @@
                 menuz.Build(sm, item.sub, env)
                 item.submenu := sm
             }
+            item.filter := menuz.ReplaceVar(item.filter)
             allowAdd := true
-            Operator := "AND"
-            tagPos := 1
-            Loop {
-                if (tagPos := RegExMatch(item.filter, "({[^{}]*})([\s,\|]*)", tagMatch, tagPos)) {
-                    tagPos := tagPos + StrLen(tagMatch1) -1
-                    tagResult := env.JudgeFilterTag(tagMatch1)
-                    if (RegExMatch(tagMatch2, "^[\s,]$")) {
-                        Operator := "AND"
+            if ( StrLen(item.filter) ) {
+                Operator := "AND"
+                tagPos := 1
+                Loop {
+                    if (tagPos := RegExMatch(item.filter, "({[^{}]*})([\s,\|]*)", tagMatch, tagPos)) {
+                        tagPos := tagPos + StrLen(tagMatch1) -1
+                        tagResult := env.JudgeFilterTag(tagMatch1)
+                        if (RegExMatch(tagMatch2, "^[\s,]$")) {
+                            Operator := "AND"
+                        }
+                        else if (RegExMatch(tagMatch2, "^[\s|]$")) {
+                            Operator := "OR"
+                        }
+                        allowAdd := Operator == "AND" ? allowAdd and tagResult : allowAdd or tagResult
                     }
-                    else if (RegExMatch(tagMatch2, "^[\s|]$")) {
-                        Operator := "OR"
+                    else {
+                        break
                     }
-                    allowAdd := Operator == "AND" ? allowAdd and tagResult : allowAdd or tagResult
-                }
-                else {
-                    break
                 }
             }
             if (allowAdd) {
@@ -471,6 +474,7 @@
             SplitPath, path, name, dir, ext, namenoext, drive
             if (InStr(FileExist(path), "D")) {
                 ext := "*Folder"
+                namenoext := name
             }
             else if (not StrLen(ext)) {
                 ext := "*NoExt"

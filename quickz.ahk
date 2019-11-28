@@ -37,6 +37,7 @@ menuz.config({cliptimeout: 400
     ,onGetClip: "myGetClip"})
 menuz.SetFilter("tt", "texttype")
 menuz.setexec("sendtext", "sendtext")
+menuz.setexec("copynamenoext", "copynamenoext")
 menuz.settag("test", "tagtest")
 menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
 mz_FromYaml("menu.yml")
@@ -49,6 +50,10 @@ mz_FromYaml(yamlFile) {
         menuz.SetVar(key, value)
     }
     For key, value in yamlObject.color
+    {
+        menuz.SetVar(key, value)
+    }
+    For key, value in yamlObject.filter
     {
         menuz.SetVar(key, value)
     }
@@ -91,6 +96,7 @@ YamlToMenu(yamlConfig) {
     }
     return menuConfig
 }
+
 tagtest(env, tag) {
     msgbox % tag ; {test: some}
     msgbox % env.file.name
@@ -99,6 +105,10 @@ tagtest(env, tag) {
 sendtext(env, item) {
     WinActivate, % "ahk_id " env.winHwnd
     SendRaw % item.param
+}
+
+copynamenoext(env, item) {
+    clipboard := env.file.namenoext
 }
 
 
