@@ -45,7 +45,10 @@
                 }
             }
             if (allowAdd) {
-                if (not menuz.CheckDynamic(item.name, parentMenu)) {
+                if (not StrLen(item.name)) {
+                    parentMenu.add()
+                }
+                else if (not menuz.CheckDynamic(item.name, parentMenu)) {
                     item.name := menuz.ItemNameAlign(item.name)
                     item.icon := menuz.ReplaceVar(item.icon)
                     item.tcolor := menuz.ReplaceVar(item.tcolor)
@@ -391,7 +394,10 @@
 
         GetClip() {
             if (IsFunc(this.config.onGetClip)) {
-                Func(this.config.onGetClip).call(this)
+                Func(this.config.onGetClip).call(this, "GetClip")
+            }
+            else if (IsObject(this.config.onGetClip)) {
+                this.config.onGetClip.call(this, "GetClip")
             }
             If (not this.IsGetClip) {
                 clipBackup := ClipboardAll
@@ -437,6 +443,12 @@
         }
 
         GetWinInfo() {
+            if (IsFunc(this.config.onGetClip)) {
+                Func(this.config.onGetClip).call(this, "GetWinInfo")
+            }
+            else if (IsObject(this.config.onGetClip)) {
+                this.config.onGetClip.call(this, "GetWinInfo")
+            }
             if (not this.IsGetWin) {
                 MouseGetPos, _PosX, _PosY, _ID, _CTRL
                 WinGetTitle, _Title, ahk_id %_ID%
@@ -521,7 +533,12 @@
             }
             customizeTag := match1
             if (this.config.filterList.HasKey(customizeTag)) {
-                return Func(this.config.filterList[customizeTag]).call(this, tag)
+                if (Func(this.config.filterList[customizeTag])) {
+                    return Func(this.config.filterList[customizeTag]).call(this, tag)
+                }
+                else if (IsObject(this.config.filterList[customizeTag])) {
+                    return this.config.filterList[customizeTag].call(this, tag)
+                }
             }
             else if (RegExMatch(tag, "i)^{only:(\w*)}$", match)) {
                 return (match1 == "file") ? this.isFile 
@@ -583,6 +600,12 @@
                 result := RegExMatch(equation, tomatch)
                 return (operator == "=") ? result : (operator == "!" ? not result : (operator == "@" ? RegExMatch(testString, equation) : true))
             }
+        }
+
+        TestRule(filter, testString) {
+            RegExMatch(filter, ":([^\{\}]*)}", match)
+            filterString := match1
+            return this.RuleTest(filterString, testString)
         }
 
         ToMatch(str)

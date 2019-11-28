@@ -1,0 +1,65 @@
+﻿var:
+  chrome: C:\Program Files (x86)\Google\Chrome\Application\chrome.exe
+  cmd: C:\windows\system32\cmd.exe
+  gvim: D:\Program Files (x86)\Vim\vim81\gvim.exe
+  vscode: D:\Program Files\Microsoft VS Code\Code.exe
+  everything: C:\Program Files\Everything\Everything.exe
+color:
+  black: 0x232323
+
+- name: "<firstmenu>"
+
+- name: "Chrome打开URL"
+  icon: %chrome%:0
+  exec: %chrome%
+  param: text}
+  filter: "{tt:=url}"
+
+- name: ""
+  filter: "{tt:=url}"
+
+- name: "运行CMD"
+  icon: %cmd%:0
+  filter: "{pos:x>800 y>600}"
+
+- name: "gvim>>"
+  icon: %gvim%:0
+  tcolor: 0xffff
+  bgcolor: %black%
+  exec: %gvim%
+  param: \"{file:path}\"
+  workdir: \"file:dir}\"
+  filter: "{ext:=ahk, js, py, yml, yaml}, {only:file}"
+
+- name: "quickz-ui"
+  icon: %vscode%:0
+  exec: %vscode%
+  param: D:\git\ahk\quickz-ui
+
+- name: "quickz-design"
+  icon: %vscode%:0
+  exec: %vscode%
+  param: D:\git\ahk\quickz-design
+
+- name: "切换到quickz-design"
+  exec: <sendtext>
+  param: cd /d D:\git\ahk\quickz-design
+  filter: {winexe:=cmd.exe}
+
+- ""
+
+- name: "常用工具"
+  sub:
+    - name: "everything"
+      icon: %everything%:0
+      exec: %everything%
+
+- name: "配置"
+  sub:
+    - name: "编辑配置"
+      exec: %gvim%
+      param: D:\git\ahk\quickz-design\menu.yml
+
+    - name: "编辑QuickZ.ahk"
+      exec: %gvim%
+      param: D:\git\ahk\quickz-design\quickz.ahk

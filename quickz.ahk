@@ -7,6 +7,8 @@ CoordMode, Mouse, Screen
 SetKeyDelay, -1
 SetControlDelay,-1
 
+
+
 vimd.setWin("et", { winClass: "EVERYTHING"
                                 ,winExe: "everything.exe"
                                 ,onBeforeKey: "et_BeforeKey"
@@ -29,6 +31,29 @@ vimd.map("et", "normal", "q", objBindMethod(vimd, "record"), "录制宏")
 vimd.map("et", "normal", "p", objBindMethod(vimd, "recordplay"), "播放宏")
 vimd.map("et", "insert", "<esc>", "np_change_to_normal")
 vimd.changeMode("et", "normal")
+
+menuz.config({cliptimeout: 400
+    ,onGetWin: ""
+    ,onGetClip: "myGetClip"})
+menuz.SetFilter("tt", "texttype")
+menuz.setexec("sendtext", "sendtext")
+menuz.settag("test", "tagtest")
+menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
+mz_FromYaml("menu.yml")
+return
+
+mz_FromYaml(yamlFile) {
+    yamlObject := yaml(yamlFile, true)
+    For key, value in yamlObject.var
+    {
+        menuz.SetVar(key, value)
+    }
+    For key, value in yamlObject.color
+    {
+        menuz.SetVar(key, value)
+    }
+    menuz.FromObject(YamlToMenu(yamlObject))
+}
 
 et_filter(win) {
     Control, Choose, % win.keyLast, ComboBox1, A
@@ -54,18 +79,18 @@ up() {
     send {up}
 }
 
-
-menuz.config({cliptimeout: 400
-    ,onGetWin: ""
-    ,onGetClip: "checktc"})
-; menuz.SetFilter("ext", "filtertest")
-menuz.setexec("sendtext", "sendtext")
-menuz.settag("test", "tagtest")
-menuz.setvar("gvim", "D:\Program Files (x86)\Vim\vim81\gvim.exe")
-menuz.setvar("chrome", "C:\chrmoe.exe")
-menuz.setvar("vscode", "D:\Program Files\Microsoft VS Code\Code.exe")
-menuz.setvar("black", 0x232323)
-menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
+YamlToMenu(yamlConfig) {
+    menuConfig := {}
+    Loop % yamlConfig.()
+    {
+        Item := yamlConfig.(A_Index)
+        if IsObject(Item.sub) {
+            Item["Sub"] := YamlToMenu(Item.sub)
+        }
+        menuConfig.push(Item)
+    }
+    return menuConfig
+}
 tagtest(env, tag) {
     msgbox % tag ; {test: some}
     msgbox % env.file.name
@@ -76,8 +101,21 @@ sendtext(env, item) {
     SendRaw % item.param
 }
 
-checktc(env) {
-    ; env.BreakGetClip()
+
+myGetClip(env, event) {
+    if (event == "GetClip") {
+        if (env.winExe == "gvim.exe") {
+            clipBackup := ClipboardAll
+            Clipboard := ""
+            SendRaw "+y
+            ClipWait, % env.config.ClipTimeOut, 1
+            env.isWin := ErrorLevel
+            clipData := Clipboard
+            env.isGetClip := true
+            env.isText := true
+            env.text := clipData
+        }
+    }
 }
 filtertest(env, filter) {
     msgbox filter> %filter%
@@ -87,39 +125,63 @@ exectest(env, item) {
     msgbox exec
 }
 
-myMenu :=   [{name: "<firstmenu>"}
-        ,{name: "gvim>>"
-            ,icon: "%gvim%:0"
-            ,tcolor: 0xffff
-            ,bgcolor: "%black%"
-            ,exec: "%gvim%"
-            ,param: """{file:path}"""
-            ,workdir: """{file:dir}"""
-            ,filter: "{ext:=ahk, js, py}, {only:file}"}
-        ,{name: "quickz-ui"
-            ,icon: "%vscode%:0"
-            ,exec: "%vscode%"
-            ,param: """D:\git\ahk\quickz-ui"""}
-        ,{name: "quickz-design"
-            ,icon: "%vscode%:0"
-            ,exec: "%vscode%"
-            ,param: """D:\git\ahk\quickz-design"""}
-        ,{name: "切换到quickz-design"
-          ,exec: "<sendtext>"
-          ,param: "cd /d D:\git\ahk\quickz-design"
-          ,filter: "{winexe:=cmd.exe}"}
-        ,{name: "编辑配置"
-            ,exec: "%gvim%"
-            ,param: "D:\git\ahk\quickz-design\quickz.ahk"}
-        ,{ name: "父菜单1"
-                ,sub:   [{name: "1"
-                                ,sub: [{name: "1.1"}]}
-                    ,{name: "2"}]}
-        ,{ name: "父菜单2"
-                ,sub:   [{name: "2.1"}]}]
-menuz.FromObject(myMenu)
+
+TextType(env, filter) {
+    textTypeName := ""
+    textRegexList := {url: "(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]"}
+    for textType, TypeRegex in textRegexList
+    {
+        if (RegExMatch(env.text, TypeRegex)) {
+            textTypeName := textType
+            break
+        }
+    }
+    return env.TestRule(filter, textTypeName)
+}
+
+; myMenu :=   [{name: "<firstmenu>"}
+;         ,{name: "Chrome打开URL"
+;             ,icon: "%chrome%:0"
+;             ,exec: "%chrome%"
+;             ,param: """{text}"""
+;             ,filter: "{tt:=url}"}
+;         ,{name: ""
+;             ,filter: "{tt:=url"}
+;         ,{name: "运行CMD"
+;             ,icon: "C:\windows\system32\cmd.exe:0"
+;             ,filter: "{pos:x>800 y>600}"}
+;         ,{name: "gvim>>"
+;             ,icon: "%gvim%:0"
+;             ,tcolor: 0xffff
+;             ,bgcolor: "%black%"
+;             ,exec: "%gvim%"
+;             ,param: """{file:path}"""
+;             ,workdir: """{file:dir}"""
+;             ,filter: "{ext:=ahk, js, py}, {only:file}"}
+;         ,{name: "quickz-ui"
+;             ,icon: "%vscode%:0"
+;             ,exec: "%vscode%"
+;             ,param: """D:\git\ahk\quickz-ui"""}
+;         ,{name: "quickz-design"
+;             ,icon: "%vscode%:0"
+;             ,exec: "%vscode%"
+;             ,param: """D:\git\ahk\quickz-design"""}
+;         ,{name: "切换到quickz-design"
+;           ,exec: "<sendtext>"
+;           ,param: "cd /d D:\git\ahk\quickz-design"
+;           ,filter: "{winexe:=cmd.exe}"}
+;         ,""
+;         ,{name: "编辑配置"
+;             ,exec: "%gvim%"
+;             ,param: "D:\git\ahk\quickz-design\quickz.ahk"}]
+        ;,{ name: "父菜单1"
+        ;        ,sub:   [{name: "1"
+        ;                        ,sub: [{name: "1.1"}]}
+        ;            ,{name: "2"}]}
+        ;,{ name: "父菜单2"
+        ;        ,sub:   [{name: "2.1"}]}]
 ; msgbox % json.dump(menuz._instance.menuStructure, 2)
-return
+; return
 ; gui, add, edit, w200 h20 , %tomatch%
 ; gui, add, edit, w200 h20 ,%equation%
 ; gui, add, button, default gRegex,正则式
@@ -142,3 +204,4 @@ return
 #include lib\pum_api.ahk
 #include lib\struct.ahk
 #include lib\sizeof.ahk
+#include lib\yaml.ahk
