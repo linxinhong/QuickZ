@@ -4,6 +4,7 @@
   gvim: D:\Program Files (x86)\Vim\vim81\gvim.exe
   vscode: D:\Program Files\Microsoft VS Code\Code.exe
   everything: C:\Program Files\Everything\Everything.exe
+  explorer: C:\windows\system32\explorer.exe
 
 filter:
   textfile: ahk, js, py, yml, yaml, txt
@@ -58,6 +59,12 @@ color:
   param: D:\git\ahk\quickz-design
   filter: "{pos:x>800 y>600}"
 
+- name: "打开QuickZ-Desing目录"
+  icon: %explorer%:0
+  exec: %explorer%
+  param: D:\git\ahk\quickz-design
+  filter: "{pos:x>800 y>600}"
+
 - name: "切换到quickz-design"
   exec: <sendtext>
   param: cd /d D:\git\ahk\quickz-design
@@ -75,7 +82,7 @@ color:
   sub:
     - name: "编辑菜单"
       exec: %gvim%
-      param: D:\git\ahk\quickz-design\menu.yml
+      param: D:\git\ahk\quickz-design\user\menu.yml
 
     - name: "编辑QuickZ.ahk"
       exec: %gvim%

@@ -40,7 +40,7 @@ menuz.setexec("sendtext", "sendtext")
 menuz.setexec("copynamenoext", "copynamenoext")
 menuz.settag("test", "tagtest")
 menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
-mz_FromYaml("menu.yml")
+mz_FromYaml("user\menu.yml")
 return
 
 mz_FromYaml(yamlFile) {
