@@ -10,7 +10,7 @@ Class_MenuZ
 
     clsas menuz 拥有一个静态的属性 *_instance*, 保存 menuz 的核心属性
 
-    .. code-block:: 
+    .. code-block::
 
         menuz._instance := new menuz.instance()
 
@@ -22,7 +22,7 @@ Class_MenuZ
 
         执行函数时，会传入两个参数，分别是当前环境对象 Env 和事件 GetClip / GetWin
 
-        .. code-block:: 
+        .. code-block::
 
             menuz._instance.onGetClip := "myGetClip"
 
@@ -67,7 +67,7 @@ Class_MenuZ
 
     传入对象，配置 MenuZ 的选项，和直接指定 menuz._instance 一样的效果。
 
-    .. code-block:: 
+    .. code-block::
 
         menuz.config({ClipTimeOut: 400
             ,ClipUseInsert: false
@@ -78,6 +78,6 @@ Class_MenuZ
 
     激活 MenuZ 获取当前环境信息，保存到 Env 对象，并根据环境信息生成菜单
 
-    .. code-block:: language
+    .. code-block::
 
         !q:: menuz.Active()
