@@ -7,7 +7,7 @@
   explorer: C:\windows\system32\explorer.exe
 
 filter:
-  textfile: ahk, js, py, yml, yaml, txt
+  textfile: ahk, js, py, yml, yaml, txt, dockerfile
 
 color:
   black: 0x232323
@@ -32,15 +32,15 @@ color:
   # tcolor: 0xffff
   # bgcolor: %black%
   exec: %gvim%
-  param: \"{file:path}\"
-  workdir: \"file:dir}\"
+  param: "{file:path}"
+  workdir: "{file:dir}"
   filter: "{ext:=%textfile%}, {only:file}"
 
 - name: "VSCode打开"
   icon: %VSCode%:0
   exec: %vscode%
-  param: \"{file:path}\"
-  workdir: \"file:dir}\"
+  param: "{file:path}"
+  workdir: "{file:dir}"
   filter: "{only:file}"
 
 - name: "复制文件名"

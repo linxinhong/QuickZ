@@ -76,14 +76,6 @@ et_BeforeKey() {
 }
 
 
-down() {
-    send {down}
-}
-
-up() {
-    send {up}
-}
-
 YamlToMenu(yamlConfig) {
     menuConfig := {}
     Loop % yamlConfig.()
@@ -205,7 +197,7 @@ msgbox % result "`n" m
 return
 
 !x::reload
-!r::menuz.Active()
+!q::menuz.Active()
 
 #include lib\class_vimd.ahk
 #include lib\class_menuz.ahk
@@ -215,3 +207,4 @@ return
 #include lib\struct.ahk
 #include lib\sizeof.ahk
 #include lib\yaml.ahk
+#include plugins\general\general.ahk

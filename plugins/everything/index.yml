@@ -1,0 +1,43 @@
+plugin:
+  author: Array
+  version: 1.0
+  info: "everything 插件"
+  init: "everything_init"
+config:
+  language: 
+    prompt: everything所使用的语言，默认中文(zh-cn)
+    options:
+      - zh-cn
+      - en-us
+    default: zh-cn
+vimd:
+  name: everything
+  winclass: EVERYTHING
+  winexe: everything.exe
+  onBeforeKey: everything_beforekey
+  maxCount: 999
+  timeout: 500
+  mode:
+    normal:
+      mapnum: true
+      default: true
+      map:
+        i: "everything_change_to_insert"
+        j: down
+        k: up
+        h: left
+        l: right 
+        va: everything_filter_all
+        vm: everything_filter_music
+        vz: everything_filter_compress
+        vd: everything_filter_document
+        ve: everything_filter_exec
+        vf: everything_filter_folder
+        vi: everything_filter_image
+        vv: everything_filter_video
+        ".": repeat
+    insert:
+      map:
+        <esc>: "everything_change_to_normal"
+menu:
+  T: 1234
