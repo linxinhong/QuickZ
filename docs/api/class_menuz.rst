@@ -10,7 +10,7 @@ Class_MenuZ
 
     clsas menuz 拥有一个静态的属性 *_instance*, 保存 menuz 的核心属性
 
-    .. code-block::
+    .. code-block:: ahk
 
         menuz._instance := new menuz.instance()
 
@@ -78,6 +78,6 @@ Class_MenuZ
 
     激活 MenuZ 获取当前环境信息，保存到 Env 对象，并根据环境信息生成菜单
 
-    .. code-block::
+    .. code-block:: ahk
 
         !q:: menuz.Active()
