@@ -33,6 +33,7 @@ extensions = [
     "sphinx_rtd_theme",
 ]
 
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -63,3 +64,5 @@ html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
 
 pygments_style = 'monokai'
+
+master_doc = 'index'
