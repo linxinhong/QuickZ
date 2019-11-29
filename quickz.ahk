@@ -39,6 +39,7 @@ menuz.SetFilter("tt", "texttype")
 menuz.setexec("sendtext", "sendtext")
 menuz.setexec("copynamenoext", "copynamenoext")
 menuz.settag("test", "tagtest")
+menuz.settag("box", "tagbox")
 menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
 mz_FromYaml("user\menu.yml")
 return
@@ -94,9 +95,16 @@ tagtest(env, tag) {
     msgbox % env.file.name
 }
 
+tagbox(env, tag)  {
+    if (InStr(tag, "folder")) {
+        FileSelectFolder, folderPath, , , 选择文件夹
+        return folderPath
+    }
+}
+
 sendtext(env, item) {
     WinActivate, % "ahk_id " env.winHwnd
-    SendRaw % item.param
+    SendRaw % menuz.ReplaceTag(item.param)
 }
 
 copynamenoext(env, item) {

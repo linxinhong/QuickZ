@@ -35,7 +35,7 @@ vimd:
         vf: everything_filter_folder
         vi: everything_filter_image
         vv: everything_filter_video
-        ".": repeat
+        .: repeat
     insert:
       map:
         <esc>: "everything_change_to_normal"

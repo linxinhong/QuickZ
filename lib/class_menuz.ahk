@@ -168,9 +168,10 @@
         }
         itemObject := menuz._instance.menuList[item.uuid]
         command := menuz.ReplaceExec(menuz.ReplaceVar(itemObject.exec), item)
-        param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
-        workdir := menuz.ReplaceTag(itemObject.workdir)
         if (StrLen(command)) {
+            param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
+            workdir := menuz.ReplaceTag(itemObject.workdir)
+            ; msgbox %command% %param%
             Run, %command% %param%, %workdir%, UseErrorLevel, PID
             if (ErrorLevel) {
                 msgbox 运行失败：%command% %param%

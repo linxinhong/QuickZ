@@ -1,7 +1,6 @@
 everything_init() {
     vimd.action("everything_change_to_insert", "切换到Insert模式")
     vimd.action("everything_change_to_normal", "切换到Noraml模式")
-    vimd.action("everything_filter_video", "筛选器-视频")
     vimd.action("everything_filter_all", "筛选器-所有")
     vimd.action("everything_filter_music", "筛选器-音频")
     vimd.action("everything_filter_compress", "筛选器-压缩文件")
@@ -13,7 +12,28 @@ everything_init() {
 }
 
 everything_filter_all() {
-    everything_filter("所有") {
+    everything_filter("所有")
+}
+everything_filter_music() {
+    everything_filter("音频")
+}
+everything_filter_compress() {
+    everything_filter("压缩文件")
+}
+everything_filter_document() {
+    everything_filter("文档")
+}
+everything_filter_exec() {
+    everything_filter("可执行文件")
+}
+everything_filter_folder() {
+    everything_filter("文件夹")
+}
+everything_filter_image() {
+    everything_filter("图片")
+}
+everything_filter_video() {
+    everything_filter("视频")
 }
 
 everything_filter(string) {

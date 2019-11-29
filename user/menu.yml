@@ -20,6 +20,9 @@ color:
   param: text}
   filter: "{tt:=url}"
 
+- name: "选中文本"
+  filter: "{only:text}"
+
 - name: ""
   filter: "{tt:=url}"
 
@@ -39,8 +42,7 @@ color:
 - name: "VSCode打开"
   icon: %VSCode%:0
   exec: %vscode%
-  param: "{file:path}"
-  workdir: "{file:dir}"
+  param: ""{file:path}""
   filter: "{only:file}"
 
 - name: "复制文件名"
@@ -68,6 +70,11 @@ color:
 - name: "切换到quickz-design"
   exec: <sendtext>
   param: cd /d D:\git\ahk\quickz-design
+  filter: {winexe:=cmd.exe}
+
+- name: "选择文件夹后切换"
+  exec: <sendtext>
+  param: cd /d {box:folder}
   filter: {winexe:=cmd.exe}
 
 - ""
