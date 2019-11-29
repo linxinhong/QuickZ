@@ -22,7 +22,7 @@ Class_MenuZ
 
         执行函数时，会传入两个参数，分别是当前环境对象 Env 和事件 GetClip / GetWin
 
-        .. code-block::
+        .. code-block:: ahk
 
             menuz._instance.onGetClip := "myGetClip"
 
@@ -67,7 +67,7 @@ Class_MenuZ
 
     传入对象，配置 MenuZ 的选项，和直接指定 menuz._instance 一样的效果。
 
-    .. code-block::
+    .. code-block:: ahk
 
         menuz.config({ClipTimeOut: 400
             ,ClipUseInsert: false
