@@ -1,12 +1,13 @@
 ﻿class menuz {
     static _instance = new menuz.instance()
 
-    Config(cnf) {
+    Config(cnf) { 
         menuz._instance.onGetClip := cnf.onGetClip
         menuz._instance.onGetWin := cnf.onGetWin
         menuz._instance.ClipUseInsert := cnf.ClipUseInsert
         menuz._instance.ClipTimeOut := cnf.ClipTimeOut ? cnf.ClipTimeOut/1000 : 0.4
-    }
+    } 
+
 
     Active() {
         env := new menuz.env(menuz._instance)
