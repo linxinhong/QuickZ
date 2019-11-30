@@ -1,3 +1,4 @@
 /ui/ico
 /ui/js/*.map
 /docs/_build
+/.vscode

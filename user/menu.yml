@@ -32,8 +32,8 @@ color:
 
 - name: "gvim>>"
   icon: %gvim%:0
-  # tcolor: 0xffff
-  # bgcolor: %black%
+  tcolor: 0xffff
+  bgcolor: %black%
   exec: %gvim%
   param: "{file:path}"
   workdir: "{file:dir}"
