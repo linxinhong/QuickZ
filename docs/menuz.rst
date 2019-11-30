@@ -15,7 +15,7 @@ MenuZ 模块的最基本工作流程：
 
 为了方便定义菜单项，MenuZ 的定义语法沿用了 Candy 的一些语法，所以你会看到类似于这样的标签:
 
-.. code-block::
+.. code-block:: ahk
 
     {file:path}
 
@@ -36,6 +36,8 @@ MenuZ 模块的最基本工作流程：
     2. 怎样定义一个菜单？
 
     3. 怎样让菜单根据选择的内容来决定是否显示？
+
+    4. 菜单点击后执行什么？
 
 选中内容
 ----------------
@@ -58,13 +60,13 @@ MenuZ 模块会将选中的内容保存一个环境信息( env )
 
     选中文件示例：
 
-    .. code-block:: 
+    .. code-block:: ahk 
 
         C:\\dir\\quickz.txt
 
     MenuZ 模块的处理如下：
 
-    .. code-block::
+    .. code-block:: ahk
 
         env.isFile          标记是否选中文件       True
         env.isFileMulti     标记是否选中多个文件   False
@@ -85,13 +87,13 @@ MenuZ 模块会将选中的内容保存一个环境信息( env )
 
     选择示例:
 
-    .. code-block:: 
+    .. code-block::  ahk
 
         abcdefg 中文
 
     MenuZ 模块的处理如下：
 
-    .. code-block:: 
+    .. code-block::  ahk
 
         env.isText          标记当前选中文本     True
         env.text            文本                abcdefg 中文
@@ -107,26 +109,32 @@ MenuZ 模块会将选中的内容保存一个环境信息( env )
 
     MenuZ 模块的处理如下：
 
-    .. code-block::
+    .. code-block:: ahk
 
-        env.isWin     标记当前选中文本            True
-        env.x         当前鼠标的 x 座标           324    
-        env.y         当前鼠标的 y 座标           230
-        env.winHwnd   当前的 Hwnd 值              0xf3d38028
-        env.winClass  当前的 Class 值,区分大小写   Notepad
-        env.winExe    当前的程序名                notepad.exe
-        env.winExeFullPath  完整程序名            C:\windows\notepad.exe
-        env.winControl  当前控件名                Edit1
-        env.winTitle   当前程序标题名             无标题 - 记事本
+        env.isWin            标记当前选中文本             True
+        env.x                当前鼠标的 x 座标            324    
+        env.y                当前鼠标的 y 座标            230
+        env.winHwnd          当前的 Hwnd 值              0xf3d38028
+        env.winClass         当前的 Class 值,区分大小写   Notepad
+        env.winExe           当前的程序名                notepad.exe
+        env.winExeFullPath   完整程序名                  C:\windows\notepad.exe
+        env.winControl       当前控件名                  Edit1
+        env.winTitle         当前程序标题名              无标题 - 记事本
 
 
 菜单项
 ----------------
 
+MenuZ 模块的菜单项支持完整的自定义，拥有多个选项满足个性化要求。
+
+.. tip::
+
+    所有的菜单项的选项都支持变量
+
 名称 (name)
 ^^^^^^^^^^^
 
-菜单的名称，名称无特殊限制。
+菜单的名称，名称无特殊限制。 当名称为空时，菜单项会显示为分割线。
 
 如需要指定菜单项的快捷键，请通过添加 ``&`` 字符实现。例如:
 
@@ -151,114 +159,103 @@ MenuZ 模块会将选中的内容保存一个环境信息( env )
 
 ``.ico``  ``.exe`` ``.dll`` ``.icl``
 
-图标值支持使用变量。
+
+例如指定变量 ``cmd`` 为 ``C:\windows\system32\cmd.exe`` 
+
+可以这样使用图标值: ``%cmd%:0``
 
 
 文字颜色 (tcolor)
 ^^^^^^^^^^^^^^^^^
 
+菜单项可以设置文字颜色，颜色值为6位十六进制RGB值。
+
+例如： ``0xffff00``
+
+.. image:: ./_static/menuz-item-color.png
+
+颜色代码可以查询 `这里 <colorcode.html>`_ 
+
 
 背景颜色 (bgcolor)
 ^^^^^^^^^^^^^^^^^
 
-运行程序
-^^^^^^^^
-exec
-
-运行参数
-^^^^^^^^
-param
-
-工作目录
-^^^^^^^^
-workdir
-
-筛选器
-^^^^^^^^
-filter
-
-子菜单
-^^^^^^^^
-sub
-
-变量
-----------------
+菜单项背景颜色，和文字颜色的设置一样，这里不多描述。
 
 
-筛选器列表
-----------------
-{only}
+筛选器 (filter)
+^^^^^^^^^^^^^^^^^
 
-{ext}
+默认所有定义的菜单在任何情况下都会显示出来，这样当然不够方便快捷。所以你需要了解筛选器的知识，还记得我们说过的环境信息 ``env`` 吗？我们需要定义筛选器，MenuZ 模块会根据定义的条件来判断是否满足当前的环境信息，最终决定是否显示对应的菜单项。
 
-{filename}
+定义一个筛选器, 声明仅当选中的文件后缀名为 ``ahk``，``txt``，``ini`` 的文件才显示，你可以这样表示：
 
-{dirname}
+.. code-block:: ahk
 
-{text}
+    {ext:= ahk, txt, ini}
 
-{winclass}
+MenuZ 内置10个筛选器，除了 ``{ext}`` 之外，常用的还有 ``{only}``, ``{text}``, ``{filename}``,  ``{winexe}``, ``{pos}`` 等。
 
-{winexe}
+这是详细列表： `筛选器列表 <filter.html>`_
 
-{wintitle}
+上述的例子中，你能看到 ``ext:`` 后面还带个了 ``=`` 号吗？ 除了 ``{pos}`` 外，其它筛选器都支持 3 种操作符
 
-{winctrl}
+``=``: 等于。
 
-{pos}
+``!``: 不等于。
 
-自定义筛选器
+``@``: 正则式匹配。
 
-标签列表
-----------------
-{file}
+操作符后的条件都是 ``与`` 连接的。
 
-{file:path}
+.. code-block:: ahk
+    
+    {ext:= ahk, txt, ini}
 
-{file:name}
+这个例子里表示: "文件后缀包括 ahk 或者 txt 或者 ini"
 
-{file:ext}
+那么 ``{pos}`` 呢？ ``{pos}`` 的操作符只有两个，``<`` 和 ``>``， 选项只有 ``x`` 和 ``y``。
 
-{file:dir}
 
-{file:namenoext}
+.. code-block:: ahk
 
-{file:drive}
+    {pos: x>800, y>600}
 
-{list}
+这个例子表示鼠标所在的 x 坐标大于 800， y 坐标大于 600，用这个筛选器就可以菜单项仅在鼠标位于屏幕右下方的时候显示。
 
-{list: [path]}
+运行程序 (exec)
+^^^^^^^^^^^^^^^^^
+运行程序一般填写可执行文件的完整路径。
 
-{list: [name]}
+如 ``c:\windows\notepad.exe``
 
-{list: [ext]}
+运行程序可以附带 函数指令 : 类似 ``<sendtext>`` 这种使用一对 ``<>`` 括起来的，表示 QuickZ 加载的函数。
 
-{list: [dir]}
+多个函数指令与可执行文件可以混合使用： ``<opencmd> <sendtext> C:\windows\notepad.exe``
 
-{list: [namenoext]}
+所有的函数指令都会在执行后替换成函数返回的值。
 
-{list: [drive]}
+运行参数 (param)
+^^^^^^^^^^^^^^^^^
+运行参数经常需要与标签一起使用。例如使用 gvim ，以 -d 参数打开某个文件，你可这样编写参数
 
-{list: [cr]}
+.. code-block:: ahk
 
-{list: [tab]}
+    -d "{file:path}" 
 
-{list: [idnex]}
+    "{file:path}" 会被替换成当前选中的文件完整路径
 
-{text}
+    "{text}" 替换当前选中的文本
 
-{win}
+你还需要了解更多的标签，请查看 `标签列表 <tag.html>`_
 
-{win:hwnd}
 
-{win:clsas}
+工作目录 (workdir)
+^^^^^^^^^^^^^^^^^
+工作目录用于运行程序时的指定目录，一般情况下留空即可。
 
-{win.exe}
+工作目录同样支持标签和变量
 
-{win:exefullpath}
-
-{win:control}
-
-{win:title}
-
-自定义标签
+子菜单 (sub)
+^^^^^^^^^^^^^^^^^
+菜单项可以做为另一个菜单项的子菜单，层次无限制，但是建议不要超过3个层级。

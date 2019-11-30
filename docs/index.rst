@@ -42,6 +42,10 @@ menuz模块的灵感来源于万年书妖的 candy，基本操作是获取当前
    :hidden:
 
    menuz
+   var
+   filter
+   tag
+   colorcode
 
 .. toctree::
    :caption: API
