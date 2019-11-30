@@ -20,8 +20,8 @@ color:
   param: text}
   filter: "{tt:=url}"
 
-- name: "选中文本"
-  filter: "{only:text}"
+- name: "打开txt文件"
+  icon: c:\windows\notepad.exe:0
 
 - name: ""
   filter: "{tt:=url}"

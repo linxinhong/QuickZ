@@ -502,6 +502,9 @@
             else if (RegExMatch(tag, "i)^{text}$", match) and this.isText) {
                 return this.text
             } 
+            else if (RegExMatch(tag, "i)^{win:(\w*)}$", match) and this.isFile and not this.isFileMulti) {
+                return this["win" match1]
+            } 
             else if (RegExMatch(tag, "i)^{list:(.*)}$", match) and this.isFileMulti) {
                 template := match1
                 if (RegExMatch(template, "\[<(\d*)]", subchar)) {
