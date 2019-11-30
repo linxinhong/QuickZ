@@ -171,7 +171,7 @@
         command := menuz.ReplaceExec(menuz.ReplaceVar(itemObject.exec), item)
         if (StrLen(command)) {
             param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
-            workdir := menuz.ReplaceTag(itemObject.workdir)
+            workdir := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.workdir))
             ; msgbox %command% %param%
             Run, %command% %param%, %workdir%, UseErrorLevel, PID
             if (ErrorLevel) {
