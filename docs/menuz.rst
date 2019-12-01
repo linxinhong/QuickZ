@@ -74,7 +74,7 @@ MenuZ 模块会将选中的内容保存一个环境信息( env )
         env.file.name       文件名                quickz.txt
         env.file.dir        文件目录              C:\dir
         env.file.ext        文件后缀              txt
-        env.file.namenoext  文件路径              quickz
+        env.file.namenoext  无文件后缀的文件名     quickz
         env.file.drive      驱动器名              C
 
 
@@ -95,8 +95,8 @@ MenuZ 模块会将选中的内容保存一个环境信息( env )
 
     .. code-block::  ahk
 
-        env.isText          标记当前选中文本     True
-        env.text            文本                abcdefg 中文
+        env.isText          标记当前选中是文本类型        True
+        env.text            当前选中的文本                abcdefg 中文
 
 窗口
 ^^^^^^

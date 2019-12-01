@@ -41,9 +41,9 @@
 
 {win:hwnd}
 
-{win:clsas}
+{win:class}
 
-{win.exe}
+{win:exe}
 
 {win:exefullpath}
 
