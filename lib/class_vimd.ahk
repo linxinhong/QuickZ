@@ -1,27 +1,27 @@
 ﻿class vimd {
 
-    static _instance = new vimd.instance
+    static self = new vimd.instance
 
     SetWin(winName, config) {
         if ( not StrLen(winName) ){
-            return vimd._instance.globalWin
+            return vimd.self.globalWin
         }
         win := new vimd.vimWin(winName, config)
-        vimd._instance.winList[winName] := win
+        vimd.self.winList[winName] := win
         if ( strlen(config.winClass)) {
-            vimd._instance.winClassList[config.winClass] := win
+            vimd.self.winClassList[config.winClass] := win
         }
         if ( strlen(config.winExe) ) {
-            vimd._instance.winExeList[config.winExe] := win
+            vimd.self.winExeList[config.winExe] := win
         }
     }
 
     GetWin(winName:="") {
         if ( StrLen(winName) ) {
-            return this._instance.winList[winName]
+            return this.self.winList[winName]
         }
         else {
-            return this._instance.globalWin
+            return this.self.globalWin
         }
     }
 
@@ -29,9 +29,9 @@
         ActiveWin := WinExist("A")
         WinGetClass, ActiveClass, ahk_id %ActiveWin%
         WinGet, ActiveExe, ProcessName, ahk_id %ActiveWin%
-        win := this._instance.winClassList[ActiveClass]
-        win := IsObject(win) ? win : this._instance.winExeList[ActiveExe]
-        return IsObject(win) ? win : this._instance.globalWin
+        win := this.self.winClassList[ActiveClass]
+        win := IsObject(win) ? win : this.self.winExeList[ActiveExe]
+        return IsObject(win) ? win : this.self.globalWin
     }
 
     SetMode(winName, modeName) {
@@ -100,11 +100,11 @@
     }
 
     Comment(actionName, tipString) {
-        vimd._instance.CommentList[actionName] := tipString
+        vimd.self.CommentList[actionName] := tipString
     }
 
     GetComment(actionName) {
-        return vimd._instance.CommentList.HasKey(actionName) ? vimd._instance.CommentList[actionName] : actionName
+        return vimd.self.CommentList.HasKey(actionName) ? vimd.self.CommentList[actionName] : actionName
     }
 
     Key() {
@@ -308,8 +308,8 @@
 
     ConvertKeyAHK(keyString, toSend := False) {
         ahkString := ""
-        if (StrLen(vimd._instance.DictVimKey[keyString])) {
-            ahkString := vimd._instance.DictVimKey[keyString]
+        if (StrLen(vimd.self.DictVimKey[keyString])) {
+            ahkString := vimd.self.DictVimKey[keyString]
             if (toSend) {
                 ahkString := "{" ahkString "}"
             }
@@ -318,13 +318,13 @@
             keyLeft := matchKey1
             keyRight := matchKey2
             if (toSend) {
-                if (StrLen(vimd._instance.DictAhkKey[keyRight])) {
+                if (StrLen(vimd.self.DictAhkKey[keyRight])) {
                     keyRight := "{" keyRight "}"
                 }
-                ahkString := vimd._instance.DictVimModifierSend[keyLeft] keyRight
+                ahkString := vimd.self.DictVimModifierSend[keyLeft] keyRight
             }
             else {
-                ahkString := vimd._instance.DictVimModifier[keyLeft] " & " keyRight
+                ahkString := vimd.self.DictVimModifier[keyLeft] " & " keyRight
             }
         }
         ; else if ( RegExMatch(keyString, "i)^<(.*)>$", matchKey) ) {
@@ -338,11 +338,11 @@
 
     ConvertKeyVIM(keyString) {
         vimString := keyString
-        if ( StrLen(vimd._instance.DictAhkKey[keyString]) ) {
-            vimString := vimd._instance.DictAhkKey[keyString]
+        if ( StrLen(vimd.self.DictAhkKey[keyString]) ) {
+            vimString := vimd.self.DictAhkKey[keyString]
         }
         else if ( RegExMatch(keyString, "(.*)\s&\s(.*)", matchKey) ) {
-            vimString := "<" vimd._instance.DictAhkModifier[matchKey1] "-" matchKey2 ">"
+            vimString := "<" vimd.self.DictAhkModifier[matchKey1] "-" matchKey2 ">"
         }
         return vimString
     }

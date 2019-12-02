@@ -1,19 +1,19 @@
 ﻿class menuz {
-    static _instance = new menuz.instance()
+    static self = new menuz.instance()
 
     Config(cnf) { 
-        menuz._instance.onGetClip := cnf.onGetClip
-        menuz._instance.onGetWin := cnf.onGetWin
-        menuz._instance.ClipUseInsert := cnf.ClipUseInsert
-        menuz._instance.ClipTimeOut := cnf.ClipTimeOut ? cnf.ClipTimeOut/1000 : 0.4
+        menuz.self.onGetClip := cnf.onGetClip
+        menuz.self.onGetWin := cnf.onGetWin
+        menuz.self.ClipUseInsert := cnf.ClipUseInsert
+        menuz.self.ClipTimeOut := cnf.ClipTimeOut ? cnf.ClipTimeOut/1000 : 0.4
     } 
 
 
     Active() {
-        env := new menuz.env(menuz._instance)
-        menuz._instance.envLast := env
-        m := menuz._instance.createMenu()
-        menuz.Build(m, menuz._instance.menuStructure, env)
+        env := new menuz.env(menuz.self)
+        menuz.self.envLast := env
+        m := menuz.self.createMenu()
+        menuz.Build(m, menuz.self.menuStructure, env)
         m.show(env.x, env.y)
     }
 
@@ -22,7 +22,7 @@
         {
             item := menuList[A_Index]
             if (item.HasKey("sub") and IsObject(item["sub"])) {
-                sm := menuz._instance.createMenu()
+                sm := menuz.self.createMenu()
                 menuz.Build(sm, item.sub, env)
                 item.submenu := sm
             }
@@ -64,9 +64,9 @@
     }
 
     CheckDynamic(nameString, pm) {
-        env := menuz._instance.envLast
+        env := menuz.self.envLast
         if (RegExMatch(nameString, "<([^<>]*)>", tagMatch)) {
-            dynamicTarget := menuz._instance.dynamicList[tagMatch1]
+            dynamicTarget := menuz.self.dynamicList[tagMatch1]
             if (IsFunc(dynamicTarget)) {
                 item := Func(dynamicTarget).call(env, pm)
             }
@@ -106,20 +106,20 @@
 
     Push(itemConfig) {
         item := new menuz.item(itemConfig)
-        menuz._instance.menuList[item.uuid] := item
-        menuz._instance.menuStructure.push(item)
+        menuz.self.menuList[item.uuid] := item
+        menuz.self.menuStructure.push(item)
         return item
     }
 
     Sub(itemConfig) {
         item := new menuz.item(itemConfig)
-        menuz._instance.menuList[item.uuid] := item
+        menuz.self.menuList[item.uuid] := item
         return item
     }
 
     SetTag(tag, function) {
         if (IsFunc(function) or IsObject(function)) {
-            menuz._instance.tagList[tag] := function
+            menuz.self.tagList[tag] := function
         }
         else {
             msgbox tag 映射的 %function% 函数不存在
@@ -128,7 +128,7 @@
 
     SetDynamic(tag, function) {
         if (IsFunc(function) or IsObject(function)) {
-            menuz._instance.dynamicList[tag] := function
+            menuz.self.dynamicList[tag] := function
         }
         else {
             msgbox tag 映射的 %function% 函数不存在
@@ -137,7 +137,7 @@
 
     SetFilter(tag, function) {
         if (IsFunc(function) or IsObject(function)) {
-            menuz._instance.filterList[tag] := function
+            menuz.self.filterList[tag] := function
         }
         else {
             msgbox tag 映射的 %function% 函数不存在
@@ -145,12 +145,12 @@
     }
 
     SetVar(var, function) {
-        menuz._instance.varList[var] := function
+        menuz.self.varList[var] := function
     }
 
     SetExec(tag, function) {
         if (IsFunc(function) or IsObject(function)) {
-            menuz._instance.execList[tag] := function
+            menuz.self.execList[tag] := function
         }
         else {
             msgbox tag 映射的 %function% 函数不存在
@@ -158,7 +158,7 @@
     }
 
     Exec(event, item) {
-        env := menuz._instance.envLast
+        env := menuz.self.envLast
         if (IsFunc(item.uuid)) {
             Func(item.uuid).call(env, event, item)
             return
@@ -167,7 +167,7 @@
             item.uuid.call(env, event, item)
             return
         }
-        itemObject := menuz._instance.menuList[item.uuid]
+        itemObject := menuz.self.menuList[item.uuid]
         command := menuz.ReplaceExec(menuz.ReplaceVar(itemObject.exec), item)
         if (StrLen(command)) {
             param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
@@ -181,14 +181,14 @@
     }
 
     ReplaceExec(execString, item) {
-        env := menuz._instance.envLast
+        env := menuz.self.envLast
         template := execString
         tagPos := 1
         Loop {
             if (tagPos := RegExMatch(execString, "<([^<>]*)>", tagMatch, tagPos)) {
                 tagPos := tagPos + StrLen(tagMatch) -1
-                if (menuz._instance.execList.HasKey(tagMatch1)) {
-                    execTarget := menuz._instance.execList[tagMatch1]
+                if (menuz.self.execList.HasKey(tagMatch1)) {
+                    execTarget := menuz.self.execList[tagMatch1]
                     if (IsFunc(execTarget)) {
                         repString := Func(execTarget).call(env, item)
                     }
@@ -209,13 +209,13 @@
     }
 
     ReplaceVar(varString) {
-        env := menuz._instance.envLast
+        env := menuz.self.envLast
         template := varString
         tagPos := 1
         Loop {
             if (tagPos := RegExMatch(varString, "%([^%]*)%", tagMatch, tagPos)) {
                 tagPos := tagPos + StrLen(tagMatch) -1
-                varTarget := menuz._instance.varList[tagMatch1]
+                varTarget := menuz.self.varList[tagMatch1]
                 if (IsFunc(varTarget)){
                     repString := Func(varTarget).call(env)
                 }
@@ -235,7 +235,7 @@
     }
 
     ReplaceTag(tagString) {
-        env := menuz._instance.envLast
+        env := menuz.self.envLast
         template := tagString
         tagPos := 1
         Loop {

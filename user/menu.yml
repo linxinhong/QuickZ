@@ -7,7 +7,7 @@
   explorer: C:\windows\system32\explorer.exe
 
 filter:
-  textfile: ahk, js, py, yml, yaml, txt, dockerfile
+  textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim
 
 color:
   black: 0x232323
@@ -35,7 +35,7 @@ color:
   tcolor: 0xffff
   bgcolor: %black%
   exec: %gvim%
-  param: "{file:path}"
+  param: ""{file:path}""
   workdir: "{file:dir}"
   filter: "{ext:=%textfile%}, {only:file}"
 

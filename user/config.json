@@ -1,1 +1,11 @@
-{x: a}
+{
+    "vimd": {
+        "winList":{}
+    },
+    "menuz": {
+        "var": {},
+        "filter": {},
+        "color": {},
+        "menu": {}
+    }
+}

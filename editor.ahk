@@ -11,9 +11,9 @@ return
 
 Class QZM {
 
-    static _instance := new QZM.instance()
+    static self := new QZM._instance()
 
-    class instance {
+    class _instance {
         __new() {
             this.rootdir := dir
             this.config := A_ScriptDir "\user\config.json"
@@ -25,19 +25,19 @@ Class QZM {
     }
 
     Listen(dir, port:=8000) {
-        QZM._instance.rootdir := dir
-        QZM._instance.port := port 
-        QZM._instance.server := new HttpServer()
-        QZM._instance.server.LoadMimes(A_ScriptDir . "/lib/mime.types")
-        QZM._instance.server.serve(port)
+        QZM.self.rootdir := dir
+        QZM.self.port := port 
+        QZM.self.server := new HttpServer()
+        QZM.self.server.LoadMimes(A_ScriptDir . "/lib/mime.types")
+        QZM.self.server.serve(port)
         ; 设置路由
-        QZM._instance.routes.push({path: "/api", func: objBindMethod(QZM, "API")})
-        QZM._instance.routes.push({path: "/", func: objBindMethod(QZM, "File")})
-        QZM._instance.server.SetRoutes(QZM._instance.routes)
+        QZM.self.routes.push({path: "/api", func: objBindMethod(QZM, "API")})
+        QZM.self.routes.push({path: "/", func: objBindMethod(QZM, "File")})
+        QZM.self.server.SetRoutes(QZM.self.routes)
     }
 
     File(ByRef req, ByRef res, ByRef server) {
-        file := QZM._instance.rootdir ( req.path == "/" ? "/index.html" : StrReplace(req.path, "/", "\") )
+        file := QZM.self.rootdir ( req.path == "/" ? "/index.html" : StrReplace(req.path, "/", "\") )
         if (FileExist(file)) {
             server.ServeFile(res, file)
             res.status := 200
@@ -52,9 +52,10 @@ Class QZM {
         /api/start
         /api/stop
         /api/config
-        /api/geticon
         /api/FileSelectFile
         /api/FileSelectFolder
+        /api/generateicon
+        /api/getvimddefined
     */
 
     API(ByRef req, ByRef res, ByRef server) {
@@ -142,19 +143,19 @@ Class QZM {
 
     Config(byRef req, byRef res, byRef server) {
         if (req.method == "GET") {
-            if (not FileExist(QZM._instance.config)) {
+            if (not FileExist(QZM.self.config)) {
                 body := json.dump({})
-                FileAppend, % body , % QZM._instance.config
+                FileAppend, % body , % QZM.self.config
             }
             else {
-                FileRead, body, % QZM._instance.config
+                FileRead, body, % QZM.self.config
             }
             res.SetBodyText(body)
             res.status := 200
         }
         else if (req.method == "POST") {
-            FileDelete, % QZM._instance.config
-            FileAppend, % req.body , % QZM._instance.config
+            FileDelete, % QZM.self.config
+            FileAppend, % req.body , % QZM.self.config
             res.status := 200
         }
     }

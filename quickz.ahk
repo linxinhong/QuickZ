@@ -17,6 +17,7 @@ vimd.setWin("et", { winClass: "EVERYTHING"
 vimd.mapNum("et", "normal")
 vimd.map("et", "normal", "j", "down")
 vimd.map("et", "normal", "k", "up")
+vimd.map("et", "normal", "r", "everything_rename")
 vimd.map("et", "normal", "w", objBindMethod(menuz, "Active"))
 vimd.map("et", "normal", "v1", "et_filter", "所有")
 vimd.map("et", "normal", "v2", "et_filter", "音频")
@@ -31,6 +32,20 @@ vimd.map("et", "normal", "q", objBindMethod(vimd, "record"), "录制宏")
 vimd.map("et", "normal", "p", objBindMethod(vimd, "recordplay"), "播放宏")
 vimd.map("et", "insert", "<esc>", "np_change_to_normal")
 vimd.changeMode("et", "normal")
+vimd.setWin("winword", {winExe: "winword.exe"
+                                ,maxCount: 999
+                                ,timeOut: 500})
+vimd.mapNum("winword", "normal")
+vimd.map("winword", "normal", "j", "down")
+vimd.map("winword", "normal", "k", "up")
+vimd.map("winword", "normal", "h", "left")
+vimd.map("winword", "normal", "l", "right")
+vimd.map("winword", "normal", "u", "winword_undo")
+vimd.map("winword", "normal", "i", "winword_change_to_insert")
+vimd.map("winword", "normal", "I", "winword_change_to_insert_LineHeader")
+vimd.map("winword", "normal", "A", "winword_change_to_insert_LineEnd")
+vimd.map("winword", "insert", "<esc>", "winword_change_to_normal")
+vimd.changeMode("winword", "normal")
 
 menuz.config({cliptimeout: 400
     ,onGetWin: ""
@@ -215,4 +230,7 @@ return
 #include lib\struct.ahk
 #include lib\sizeof.ahk
 #include lib\yaml.ahk
-#include plugins\general\general.ahk
+#include *i user\include.ahk
+#include user\general\general.ahk
+#include user\winword\winword.ahk
+#include user\everything\everything.ahk
