@@ -12,8 +12,6 @@ filter:
 color:
   black: 0x232323
 
-- name: "<firstmenu>"
-
 - name: "Chrome打开URL"
   icon: %chrome%:0
   exec: %chrome%
@@ -89,7 +87,7 @@ color:
   sub:
     - name: "编辑菜单"
       exec: %gvim%
-      param: D:\git\ahk\quickz-design\user\menu.yml
+      param: D:\git\ahk\quickz-design\user\yml2menu\menu.yml
 
     - name: "编辑QuickZ.ahk"
       exec: %gvim%

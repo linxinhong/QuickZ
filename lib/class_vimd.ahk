@@ -522,8 +522,8 @@
                     }
                 }
                 MouseGetPos, posx, posy, A
-                posx += 60
-                posy += 60
+                posx += 30
+                posy += 30
                 Tooltip, %Text%, %posx%, %posy%
             }
         }

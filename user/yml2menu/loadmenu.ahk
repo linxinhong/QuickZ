@@ -23,6 +23,9 @@ YamlToMenu(yamlConfig) {
         if IsObject(Item.sub) {
             Item["Sub"] := YamlToMenu(Item.sub)
         }
+        if IsObject(Item.Peer) {
+            Item["Peer"] := YamlToMenu(Item.Peer)
+        }
         menuConfig.push(Item)
     }
     return menuConfig

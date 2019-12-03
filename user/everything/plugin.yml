@@ -12,6 +12,9 @@ config:
       - zh-cn
       - en-us
     default: zh-cn
+command:
+  find_by_everything:
+    prompt: "查询" 
 vimd:
   name: everything
   winclass: EVERYTHING
@@ -41,5 +44,12 @@ vimd:
     insert:
       map:
         <esc>: "everything_change_to_normal"
+var:
+  chrome2: ""
+
 menu:
-  T: 1234
+  - filter: "{winclass:=EVERYTHING}"
+    peer:
+      - name: "everything"
+        exec: "<筛选器-压缩文件>"
+      - name: "everything2"

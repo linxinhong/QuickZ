@@ -13,6 +13,7 @@
         env := new menuz.env(menuz.self)
         menuz.self.envLast := env
         m := menuz.self.createMenu()
+        menuz.FirstMenu(env, m)
         menuz.Build(m, menuz.self.menuStructure, env)
         m.show(env.x, env.y)
     }
@@ -49,7 +50,10 @@
                 }
             }
             if (allowAdd) {
-                if (not StrLen(item.name)) {
+                if (IsObject(item.peer)) {
+                    menuz.Build(parentMenu, item.peer, env)
+                }
+                else if (not StrLen(item.name)) {
                     parentMenu.add()
                 }
                 else if (not menuz.CheckDynamic(item.name, parentMenu)) {
@@ -86,6 +90,9 @@
             itemObject := menuObject[A_Index]
             if ( IsObject(itemObject.Sub) ) {
                 itemObject.Sub := menuz.FromObject_Sub(itemObject.sub)
+            }
+            if ( IsObject(itemObject.Peer) ) {
+                itemObject.Peer := menuz.FromObject_Sub(itemObject.Peer)
             }
             menuz.Push(menuObject[A_Index])
         }
@@ -190,10 +197,20 @@
                 if (menuz.self.execList.HasKey(tagMatch1)) {
                     execTarget := menuz.self.execList[tagMatch1]
                     if (IsFunc(execTarget)) {
-                        repString := Func(execTarget).call(env, item)
+                        if (Func(execTarget).MinParams == 2) {
+                            repString := Func(execTarget).call(env, item)
+                        }
+                        else if (Func(execTarget).MinParams == 0) {
+                            repString := Func(execTarget).call()
+                        }
                     }
                     else if (IsObject(execTarget)) {
-                        repString := execTarget.call(env, item)
+                        if (execTarget.MinParams == 2) {
+                            repString := execTarget.call(env, item)
+                        }
+                        else if (execTarget.MinParams == 0) {
+                            repString := execTarget.call()
+                        }
                     }
                     else {
                         repString := execTarget
@@ -637,6 +654,7 @@
             this.workdir := config.workdir
             this.filter := config.filter
             this.sub := config.sub
+            this.peer := config.peer
         }
     }
 
