@@ -8,6 +8,8 @@ SetKeyDelay, -1
 SetControlDelay,-1
 
 
+quickz.LoadPlugins()
+quickz.InitPlugins()
 
 vimd.setWin("et", { winClass: "EVERYTHING"
                                 ,winExe: "everything.exe"
@@ -56,25 +58,8 @@ menuz.setexec("copynamenoext", "copynamenoext")
 menuz.settag("test", "tagtest")
 menuz.settag("box", "tagbox")
 menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
-mz_FromYaml("user\menu.yml")
 return
 
-mz_FromYaml(yamlFile) {
-    yamlObject := yaml(yamlFile, true)
-    For key, value in yamlObject.var
-    {
-        menuz.SetVar(key, value)
-    }
-    For key, value in yamlObject.color
-    {
-        menuz.SetVar(key, value)
-    }
-    For key, value in yamlObject.filter
-    {
-        menuz.SetVar(key, value)
-    }
-    menuz.FromObject(YamlToMenu(yamlObject))
-}
 
 et_filter(win) {
     Control, Choose, % win.keyLast, ComboBox1, A
@@ -89,20 +74,6 @@ et_BeforeKey() {
     if (focusCtrl == "Edit1") {
         vimd.SendRaw("et")
     }
-}
-
-
-YamlToMenu(yamlConfig) {
-    menuConfig := {}
-    Loop % yamlConfig.()
-    {
-        Item := yamlConfig.(A_Index)
-        if IsObject(Item.sub) {
-            Item["Sub"] := YamlToMenu(Item.sub)
-        }
-        menuConfig.push(Item)
-    }
-    return menuConfig
 }
 
 tagtest(env, tag) {
@@ -224,12 +195,14 @@ return
 
 #include lib\class_vimd.ahk
 #include lib\class_menuz.ahk
+#include lib\class_quickz.ahk
 #include lib\class_json.ahk
 #include lib\pum.ahk
 #include lib\pum_api.ahk
 #include lib\struct.ahk
 #include lib\sizeof.ahk
 #include lib\yaml.ahk
+#include lib\Path_API.ahk
 #include *i user\include.ahk
 #include user\general\general.ahk
 #include user\winword\winword.ahk

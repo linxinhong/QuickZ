@@ -1,0 +1,19 @@
+totalcmd:
+  winClass: totalcmd
+  winExe: totalcmd.exe
+  source: ./tc.ahk
+  init: tc_Init
+  changedMode: tc_ChangeMode
+  beforeAction: tc_BeforeAction
+  afterAction: tc_AfterAction
+  showTip: tc_ShowTip
+  maxCount: 100
+  timeOut: 0
+  mode:
+    normal:
+      j: down
+      u: up
+      h: left
+      l: right
+    insert:
+      <esc>: change_to_normal
