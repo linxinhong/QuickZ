@@ -7,7 +7,7 @@ quickz.LoadPlugins()
 quickz.GenerateInclude()
 ; quickz.InitPlugins()
 
-!z::reload
+exitApp
 
 #include lib\class_quickz.ahk
 #include lib\Path_API.ahk

@@ -1,0 +1,6 @@
+﻿plugin:
+  name: "general"
+  author: Array
+  version: 1.0
+  info: "常用功能"
+  include: "general.ahk"

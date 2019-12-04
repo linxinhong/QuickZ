@@ -103,6 +103,7 @@ return
 #include lib\class_menuz.ahk
 #include lib\class_quickz.ahk
 #include lib\class_json.ahk
+#include lib\class_easyini.ahk
 #include lib\pum.ahk
 #include lib\pum_api.ahk
 #include lib\struct.ahk
@@ -110,6 +111,3 @@ return
 #include lib\yaml.ahk
 #include lib\Path_API.ahk
 #include *i user\include.ahk
-#include user\general\general.ahk
-#include user\winword\winword.ahk
-#include user\everything\everything.ahk

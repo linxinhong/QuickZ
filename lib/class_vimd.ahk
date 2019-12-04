@@ -71,6 +71,10 @@
     }
 
     Map(winName, modeName, key, action, comment:="") {
+        if (not (StrLen(modeName) or StrLen(key) or StrLen(action))) {
+            msgbox % "无效映射:`nwin: " winName "`nmode: " modeName "`nkey: " key "`naction: " action
+            return
+        }
         win := vimd.GetWin(winName)
         if (IsFunc(win.onMap)) {
             Func(win.onMap).call(win)
@@ -97,6 +101,11 @@
     SendRaw(winName) {
         win := vimd.GetWin(winName)
         win.SendRawOnce := true
+    }
+
+    clear(winName) {
+        win := vimd.GetWin(winName)
+        win.ClaerAll()
     }
 
     Comment(actionName, tipString) {
@@ -147,7 +156,6 @@
         }
         timerFunction := objBindMethod(vimd, "Timer", keyCache)
         if ( mode.GetMore(keyCache) ) {
-            mode.GetMoreText()
             win.ShowTip(KeyCache)
             if (win.timeOut and mode.HasMap(keyCache)) {
                 SetTimer, %timerFunction% , % win.timeOut
@@ -608,7 +616,7 @@
 
         GetMoreList(keyString) {
             moreList := []
-            match := vimd.ToMatch(keyString) ".+"
+            match := "^" vimd.ToMatch(keyString) ".+"
             for keyString, keyObject in this.mapList
             {
                 If (RegExMatch(keyString, match)) {

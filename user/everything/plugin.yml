@@ -48,7 +48,8 @@ var:
   chrome2: ""
 
 menu:
-  - filter: "{winclass:=EVERYTHING}"
+  - name: everything 系列菜单
+    filter: "{winclass:=EVERYTHING}"
     peer:
       - name: "everything"
         exec: "<筛选器-压缩文件>"

@@ -5,6 +5,7 @@
   vscode: D:\Program Files\Microsoft VS Code\Code.exe
   everything: C:\Program Files\Everything\Everything.exe
   explorer: C:\windows\system32\explorer.exe
+  conemu: D:\Program Files\cmder\vendor\conemu-maximus5\ConEmu.exe
 
 filter:
   textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim
@@ -18,15 +19,27 @@ color:
   param: text}
   filter: "{tt:=url}"
 
-- name: "打开txt文件"
-  icon: c:\windows\notepad.exe:0
+- name: "ConEmu打开路径"
+  icon: %conemu%:0
+  exec: %conemu%
+  param: -dir "{file:dir}" 
+  filter: "{only:file}"
 
 - name: ""
   filter: "{tt:=url}"
 
-- name: "运行CMD"
-  icon: %cmd%:0
+- name: 屏幕右下常用工具
   filter: "{pos:x>800 y>600}"
+  peer:
+    - name: "运行CMD"
+      icon: %cmd%:0
+      exec: %cmd%
+
+    - name: ConEmu
+      icon: %conemu%:0
+      exec: %conemu%
+
+    - name:
 
 - name: "gvim>>"
   icon: %gvim%:0
