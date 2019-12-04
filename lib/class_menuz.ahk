@@ -519,7 +519,7 @@
             else if (RegExMatch(tag, "i)^{text}$", match) and this.isText) {
                 return this.text
             } 
-            else if (RegExMatch(tag, "i)^{win:(\w*)}$", match) and this.isFile and not this.isFileMulti) {
+            else if (RegExMatch(tag, "i)^{win:(\w*)}$", match) and not this.isFile and not this.isFileMulti) {
                 return this["win" match1]
             } 
             else if (RegExMatch(tag, "i)^{list:(.*)}$", match) and this.isFileMulti) {
@@ -566,9 +566,9 @@
                     return this.config.filterList[customizeTag].call(this, tag)
                 }
             }
-            else if (RegExMatch(tag, "i)^{only:(\w*)}$", match)) {
-                return (match1 == "file") ? this.isFile 
-                    : ((match1 == "text") ? this.isText : false)
+            else if (RegExMatch(tag, "i)^{only:(.*)}$", match)) {
+                onlyType := this.isFile ? "file" : (this.isText ? "text" : "win")
+                return this.RuleTest(match1, onlyType)
             }
             else if (RegExMatch(tag, "i)^{ext:(.*)}$", match)) {
                 return this.RuleTest(match1, this.file.ext)

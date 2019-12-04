@@ -28,6 +28,11 @@ color:
 - name: ""
   filter: "{tt:=url}"
 
+- name: "打开当前程序所在的路径"
+  exec: "%explorer%"
+  param: /select,{win:exefullpath}
+  filter: {only:=win, file}
+
 - name: 屏幕右下常用工具
   filter: "{pos:x>800 y>600}"
   peer:
