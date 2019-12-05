@@ -2,10 +2,16 @@
     "vimd": {
         "winList":{}
     },
+    "var": {
+        "exec": {},
+        "filter": {}
+    },
+    "tag": {
+
+    },
+    "setting": {
+
+    },
     "menuz": {
-        "var": {},
-        "filter": {},
-        "color": {},
-        "menu": {}
     }
 }

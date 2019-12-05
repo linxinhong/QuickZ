@@ -126,6 +126,6 @@
     Comment(actionName, tipString) {
         quickz.self.Actions[actionName] := tipString
         vimd.Comment(actionName, tipString)
-        menuz.SetExec(tipString, actionName)
+        menuz.SetExec(actionName, actionName)
     }
 }

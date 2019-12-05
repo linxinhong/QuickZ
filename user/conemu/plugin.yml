@@ -1,0 +1,33 @@
+plugin:
+  author: ''
+  include: conemu.ahk
+  info: ''
+  init: conemu_init
+  name: ''
+  version: ''
+command: ''
+config: ''
+menu:
+var:
+  conemu: ''
+vimd:
+  name: conemu
+  winclass: Chrome_WidgetWin_1
+  winexe: Code.exe
+  maxCount: 999
+  timeOut: 500
+  onMap: ''
+  onBeforeKey: ''
+  onAfterKey: ''
+  onBeforAction: ''
+  onAfterAction: ''
+  onChangeMode: ''
+  onShowTip: ''
+  onHideTip: ''
+  mode:
+    insert:
+      map: ''
+    normal:
+      default: true
+      mapnum: false
+      map: ''

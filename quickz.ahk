@@ -15,6 +15,7 @@ menuz.config({cliptimeout: 400
     ,onGetClip: "myGetClip"})
 menuz.SetFilter("tt", "texttype")
 menuz.setexec("sendtext", "sendtext")
+menuz.setexec("sendenter", "sendenter")
 menuz.setexec("copynamenoext", "copynamenoext")
 menuz.settag("test", "tagtest")
 menuz.settag("box", "tagbox")
@@ -37,6 +38,11 @@ tagbox(env, tag)  {
 sendtext(env, item) {
     WinActivate, % "ahk_id " env.winHwnd
     SendRaw % menuz.ReplaceTag(item.param)
+}
+
+sendenter(env, item) {
+    WinActivate, % "ahk_id " env.winHwnd
+    Send {enter}
 }
 
 copynamenoext(env, item) {
@@ -97,7 +103,7 @@ return
 return
 
 !x::reload
-!q::menuz.Active()
+CapsLock::menuz.Active()
 
 #include lib\class_vimd.ahk
 #include lib\class_menuz.ahk

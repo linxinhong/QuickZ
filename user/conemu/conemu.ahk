@@ -1,0 +1,6 @@
+conemuinit() {
+
+}
+conemu() {
+
+}

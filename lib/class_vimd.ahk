@@ -465,9 +465,9 @@
             this.onAfterAction := config.onAfterAction
             this.onShowTip := config.onShowTip
             this.onHideTip := config.onHideTip
-            if (IsFunc(config.onInit)) {
-                Func(config.onInit).call(this)
-            }
+            ; if (IsFunc(config.onInit)) {
+            ;     Func(config.onInit).call(this)
+            ; }
         }
 
         HasMode(modeName) {
