@@ -179,7 +179,7 @@
         if (StrLen(command)) {
             param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
             workdir := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.workdir))
-            ;msgbox % command "`n" param "`n" workdir
+            quickz.log({command: command, param: param, workdir: workdir})
             Run, %command% %param%, %workdir%, UseErrorLevel, PID
             if (ErrorLevel) {
                 msgbox 运行失败：%command% %param%
