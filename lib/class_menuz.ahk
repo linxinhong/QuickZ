@@ -179,7 +179,7 @@
         if (StrLen(command)) {
             param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
             workdir := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.workdir))
-            ; msgbox %command% %param%
+            ;msgbox % command "`n" param "`n" workdir
             Run, %command% %param%, %workdir%, UseErrorLevel, PID
             if (ErrorLevel) {
                 msgbox 运行失败：%command% %param%
@@ -438,6 +438,7 @@
                 if (this.isFile) {
                     files := clipData
                     if (InStr(files, "`n")) {
+                        sort, files
                         fileList := {}
                         extList := {}
                         Loop, parse, files, `n, `r
@@ -513,8 +514,13 @@
             if (this.config.tagList.HasKey(customizeTag)) {
                 return Func(this.config.tagList[customizeTag]).call(this, tag)
             }
-            else if (RegExMatch(tag, "i)^{file:(\w*)}$", match) and this.isFile and not this.isFileMulti) {
-                return this.file[match1]
+            else if (RegExMatch(tag, "i)^{file:(\w*)}$", match) and this.isFile ) {
+                if (this.isFileMulti) {
+                  return this.fileMulti.fileList[1][match1]
+                }
+                else {
+                  return this.file[match1]
+                }
             } 
             else if (RegExMatch(tag, "i)^{text}$", match) and this.isText) {
                 return this.text
@@ -549,9 +555,6 @@
                 return ListString
             }
         }
-        /*
-        ext=ahk,js
-        */
 
         JudgeFilterTag(tag) {
             if (not RegExMatch(tag, "{([\w]*).*}", match)) {
@@ -567,7 +570,7 @@
                 }
             }
             else if (RegExMatch(tag, "i)^{only:(.*)}$", match)) {
-                onlyType := this.isFile ? "file" : (this.isText ? "text" : "win")
+                onlyType := this.isFile ? (this.isFileMulti ? "list" : "file") : (this.isText ? "text" : "win")
                 return this.RuleTest(match1, onlyType)
             }
             else if (RegExMatch(tag, "i)^{ext:(.*)}$", match)) {
