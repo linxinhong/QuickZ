@@ -72,10 +72,10 @@
             {
                 Item := yamlConfig.(A_Index)
                 if IsObject(Item.sub) {
-                    Item["Sub"] := YamlToMenu(Item.sub)
+                    Item["Sub"] := this.YamlToMenu(Item.sub)
                 }
                 if IsObject(Item.Peer) {
-                    Item["Peer"] := YamlToMenu(Item.Peer)
+                    Item["Peer"] := this.YamlToMenu(Item.Peer)
                 }
                 menuConfig.push(Item)
             }

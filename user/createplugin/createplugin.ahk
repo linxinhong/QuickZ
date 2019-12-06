@@ -10,6 +10,8 @@ CreatePlugin(env, item) {
     pluginDir := A_ScriptDir "\User\" pluginName 
     ahkFilePath := PluginDir "\" pluginName ".ahk"
     ymlFilePath := PluginDir "\plugin.yml"
+    winclass := env.winclass
+    winexe := env.winexe
     ahk := pluginName "init() {`n`n}`n" pluginName "() {`n`n}"
     yml = 
 (
@@ -27,8 +29,8 @@ var:
   %pluginName%: ''
 vimd: 
   name: %PluginName%
-  winclass: Chrome_WidgetWin_1
-  winexe: Code.exe
+  winclass: %winclass%
+  winexe:  %winexe%
   maxCount: 999
   timeOut: 500
   onMap: ''

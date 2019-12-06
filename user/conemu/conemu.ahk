@@ -1,6 +1,0 @@
-conemuinit() {
-
-}
-conemu() {
-
-}

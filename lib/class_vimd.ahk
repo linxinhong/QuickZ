@@ -264,7 +264,7 @@
         keyObject.noWait := noWait
         keyObject.noMulti := noMulti
         keyObject.action := ""
-        keyObject.Commnet := ""
+        keyObject.Comment := ""
 
         keyString := StrReplace(StrReplace(keyString
                        , "<", "`n<")
@@ -515,6 +515,24 @@
         ClearCache() {
             this.keyCache := ""
         }
+
+        TipAlign(nameString, length:=32) {
+            template := nameString
+            if (InStr(nameString, "`t")) {
+                prefixString := RegExReplace(nameString, "\t.*")
+                prefixLength := Strlen(prefixString)
+                suffixString := RegExReplace(nameString, "^.*?\t")
+                suffixLength := StrLen(RegExReplace(suffixString, "&"))
+                SpaceCount := length - prefixLength - suffixLength
+                If SpaceCount > 0
+                {
+                    Loop % SpaceCount
+                        Spaces .= A_Space
+                    template := prefixString Spaces suffixString
+                }
+            }
+            return template
+        }
         
         ShowTip(Text) {
             if (IsFunc(this.onShowTip)) {
@@ -523,10 +541,10 @@
             else {
                 if (StrLen(this.keyCache)) {
                     Text := this.Count ? this.Count Text : Text
-                    Text := Text "`n==============`n"
+                    Text := Text "`n======================`n"
                     for index , more in this.GetMoreList()
                     {
-                        Text .= more.key "`t" vimd.GetComment(more.action) "`n"
+                        Text .= this.TipAlign(more.key "`t" vimd.GetComment(more.action)) "`n"
                     }
                 }
                 MouseGetPos, posx, posy, A
@@ -585,6 +603,7 @@
             InputBox, macroName, VimD 执行录制宏, 请输入宏的名称 
             return this.RecordList[macroName]
         }
+
     }
 
     class vimMode {
@@ -616,11 +635,11 @@
 
         GetMoreList(keyString) {
             moreList := []
-            match := "^" vimd.ToMatch(keyString) ".+"
+            match := "i)^" vimd.ToMatch(keyString) ".+"
             for keyString, keyObject in this.mapList
             {
                 If (RegExMatch(keyString, match)) {
-                    moreList.push({key: keyString, action: StrLen(keyObject.Comment) ? keyObject.Comment : keyObject.action})
+                    moreList.push({key: keyString, action: (StrLen(keyObject.Comment) ? keyObject.Comment : keyObject.action)})
                 }
             }
             return moreList
