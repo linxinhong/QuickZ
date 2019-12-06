@@ -140,6 +140,7 @@
         keyCache := win.AppendPress(keyPress)
         if ( win.SuperList.HasKey(keyCache) ) {
             vimd.DoAction(win.SuperList[keyCache].action, 1)
+            return
         }
         if (mode.HasMap(keyCache)) {
             if ( RegExMatch(mode.GetAction(keyCache), "^<(\d)>$", keyCount) and RegExMatch(keyCache, "^\d*$") ){
@@ -164,6 +165,9 @@
         else if ( mode.HasMap(keyPress) ){
             vimd.DoAction(mode.GetAction(keyPress), win.GetCount())
             win.ClaerAll()
+        }
+        else {
+            SendInput, % vimd.ConvertKeyAHK(keyPress, toSend:=true)
         }
     }
 
