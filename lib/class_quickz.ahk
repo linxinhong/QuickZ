@@ -7,6 +7,7 @@
             this.Actions := {}
             this.UserDir := A_ScriptDir "\User"
             this.IncludeFile := this.UserDir "\include.ahk"
+            this.LogFile := this.UserDir "\run.log"
         }
     }
 
@@ -21,7 +22,8 @@
             this.config  :=  plugin.config
             this.command :=  plugin.plugin.command
             this.vimd    :=  plugin.vimd
-            this.menu   :=  plugin.menu
+            this.menu    :=  plugin.menu
+            this.var     :=  plugin.var
             this.dir :=  ""
         }
 
@@ -57,12 +59,17 @@
 
         LoadMenuZ() {
             if (this.menu.()) {
+                menuObject := {}
+                menuz.FromObject(this.YamlToMenu(this.menu))
+            }
+        }
+
+        LoadVar() {
+            if (IsObject(this.var)) {
                 for key , value in this.var
                 {
                     menuz.SetVar(key, value)
                 }
-                menuObject := {}
-                menuz.FromObject(this.YamlToMenu(this.menu))
             }
         }
 
@@ -109,6 +116,7 @@
             plugin.Init()
             plugin.LoadVimd()
             plugin.LoadMenuZ()
+            plugin.LoadVar()
         }
     }
 
@@ -127,5 +135,12 @@
         quickz.self.Actions[actionName] := tipString
         vimd.Comment(actionName, tipString)
         menuz.SetExec(actionName, actionName)
+    }
+
+    log(string) {
+        if (IsObject(string)) {
+            string := json.dump(string)
+        }
+        FileAppend, % string "`n", % quickz.self.logFile
     }
 }
