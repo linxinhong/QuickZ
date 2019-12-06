@@ -2,3 +2,6 @@
 /ui/js/*.map
 /docs/_build
 /.vscode
+/user/conemu
+/user/youdaonote
+/user/pdfimage
