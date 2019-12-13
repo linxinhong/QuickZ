@@ -108,7 +108,7 @@
         win.ClaerAll()
     }
 
-    Comment(actionName, tipString) {
+    SetCommand(actionName, tipString) {
         vimd.self.CommentList[actionName] := tipString
     }
 

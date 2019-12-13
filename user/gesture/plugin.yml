@@ -1,0 +1,16 @@
+plugin:
+  author: 'Array'
+  include: gesture.ahk
+  info: '����ʾ��'
+  init: gesture_init
+  name: gesture
+  version: 1.0
+  changelog: changelog.md
+  readme: readme.md
+commands: ''
+config: ''
+var:
+gesture:
+  9: menuactive
+  8: WinMinimize
+  2: WinMaximize

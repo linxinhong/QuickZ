@@ -1,5 +1,9 @@
-﻿#Include *i D:\Git\ahk\quickz-design\User\createplugin\createplugin.ahk
+﻿#Include *i D:\Git\ahk\quickz-design\User\conemu\conemu.ahk
+#Include *i D:\Git\ahk\quickz-design\User\createplugin\createplugin.ahk
 #Include *i D:\Git\ahk\quickz-design\User\everything\everything.ahk
 #Include *i D:\Git\ahk\quickz-design\User\general\general.ahk
+#Include *i D:\Git\ahk\quickz-design\User\gesture\gesture.ahk
+#Include *i D:\Git\ahk\quickz-design\User\pdfimage\pdfimage.ahk
+#Include *i D:\Git\ahk\quickz-design\User\tesseract\tesseract.ahk
 #Include *i D:\Git\ahk\quickz-design\User\totalcmd\totalcmd.ahk
 #Include *i D:\Git\ahk\quickz-design\User\yml2menu\loadmenu.ahk

@@ -14,12 +14,17 @@ menuz.config({cliptimeout: 400
     ,onGetWin: ""
     ,onGetClip: "myGetClip"})
 menuz.SetFilter("tt", "texttype")
-menuz.setexec("sendtext", "sendtext")
-menuz.setexec("sendenter", "sendenter")
-menuz.setexec("copynamenoext", "copynamenoext")
+menuz.SetCommand("sendtext", "sendtext")
+menuz.SetCommand("sendenter", "sendenter")
+menuz.SetCommand("copynamenoext", "copynamenoext")
 menuz.settag("test", "tagtest")
 menuz.settag("box", "tagbox")
 menuz.setdynamic("firstmenu", objBindMethod(menuz, "firstmenu"))
+
+; gesturez.add(9, ObjBindMethod(menuz, "Active"))
+; gesturez.add("c", "calc", "Notepad")
+; gesturez.add("n", "notepad")
+; gesturez.add("u", "down")
 return
 
 
@@ -33,11 +38,19 @@ tagbox(env, tag)  {
         FileSelectFolder, folderPath, , , 选择文件夹
         return folderPath
     }
+    if (InStr(tag, "file")) {
+        FileSelectFile, filePath, , , 选择文件
+        if (not StrLen(filePath)) {
+            env.break()
+        }
+        return filePath
+    }
 }
 
 sendtext(env, item) {
     WinActivate, % "ahk_id " env.winHwnd
     SendRaw % menuz.ReplaceTag(item.param)
+    env.break()
 }
 
 sendenter(env, item) {
@@ -59,9 +72,9 @@ myGetClip(env, event) {
             ClipWait, % env.config.ClipTimeOut, 1
             env.isWin := ErrorLevel
             clipData := Clipboard
-            env.isGetClip := true
             env.isText := true
             env.text := clipData
+            env.isGetClip := true
         }
     }
 }
@@ -105,8 +118,13 @@ return
 !x::reload
 CapsLock::menuz.Active()
 
+RButton::
+    gesturez.Recognize()
+return
+
 #include lib\class_vimd.ahk
 #include lib\class_menuz.ahk
+#include lib\class_gesturez.ahk
 #include lib\class_quickz.ahk
 #include lib\class_json.ahk
 #include lib\class_easyini.ahk

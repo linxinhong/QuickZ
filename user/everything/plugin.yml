@@ -6,15 +6,15 @@
   include: "everything.ahk"
   init: "everything_init"
 config:
-  language: 
-    prompt: everything所使用的语言，默认中文(zh-cn)
+  - name: language
+    description: everything所使用的语言，默认中文(zh-cn)
     options:
       - zh-cn
       - en-us
     default: zh-cn
-command:
-  find_by_everything:
-    prompt: "查询" 
+commands:
+  - command: everything_filter_all
+    title: "筛选器-所有" 
 vimd:
   name: everything
   winclass: EVERYTHING

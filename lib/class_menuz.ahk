@@ -155,7 +155,7 @@
         menuz.self.varList[var] := function
     }
 
-    SetExec(tag, function) {
+    SetCommand(tag, function) {
         if (IsFunc(function) or IsObject(function)) {
             menuz.self.execList[tag] := function
         }
@@ -176,10 +176,13 @@
         }
         itemObject := menuz.self.menuList[item.uuid]
         command := menuz.ReplaceExec(menuz.ReplaceVar(itemObject.exec), item)
-        if (StrLen(command)) {
-            param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
-            workdir := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.workdir))
+        param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
+        workdir := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.workdir))
+        if (StrLen(command) or StrLen(param)) {
             quickz.log({command: command, param: param, workdir: workdir})
+            if (env.IsBreak) {
+                return
+            }
             Run, %command% %param%, %workdir%, UseErrorLevel, PID
             if (ErrorLevel) {
                 msgbox 运行失败：%command% %param%
@@ -381,6 +384,7 @@
             this.isFileMulti := false
             this.isText := false
             this.isWin := false
+            this.isBreak := false
 
             this.file := {}
             this.fileMulti := {}
@@ -408,6 +412,10 @@
 
         BreakGetWin() {
             this.IsGetWin := true
+        }
+
+        Break() {
+            this.IsBreak := true
         }
 
         GetKeyword() {

@@ -20,9 +20,10 @@
             this.include :=  plugin.plugin.include
             this.init    :=  plugin.plugin.init
             this.config  :=  plugin.config
-            this.command :=  plugin.plugin.command
+            this.commands :=  plugin.plugin.commands
             this.vimd    :=  plugin.vimd
             this.menu    :=  plugin.menu
+            this.gesture :=  plugin.gesture
             this.var     :=  plugin.var
             this.dir :=  ""
         }
@@ -59,8 +60,17 @@
 
         LoadMenuZ() {
             if (this.menu.()) {
-                menuObject := {}
                 menuz.FromObject(this.YamlToMenu(this.menu))
+            }
+        }
+
+        LoadGestureZ() {
+            if (IsObject(this.gesture)) {
+                for name, action in this.gesture
+                {
+                    gesturez.add(name, action)
+                    quickz.log({command: name, param: action, workdir: this.name})
+                }
             }
         }
 
@@ -69,8 +79,22 @@
                 for key , value in this.var
                 {
                     menuz.SetVar(key, value)
+                    quickz.log({command: key, param: value, workdir: this.name})
                 }
             }
+        }
+
+        LoadCommands() {
+            if (IsObject(this.commands)) {
+                for key , value in this.commands
+                {
+                    quickz.SetCommand(key, value)
+                }
+            }
+        }
+
+        LoadConfig() {
+
         }
 
         YamlToMenu(yamlConfig) {
@@ -106,6 +130,8 @@
         }
     }
 
+    ; dump to qzp
+
     DumpPlugins() {
 
     }
@@ -116,6 +142,7 @@
             plugin.Init()
             plugin.LoadVimd()
             plugin.LoadMenuZ()
+            plugin.LoadGestureZ()
             plugin.LoadVar()
         }
     }
@@ -131,16 +158,16 @@
         }
     }
 
-    Comment(actionName, tipString) {
+    SetCommand(actionName, tipString) {
         quickz.self.Actions[actionName] := tipString
-        vimd.Comment(actionName, tipString)
-        menuz.SetExec(actionName, actionName)
+        vimd.SetCommand(actionName, tipString)
+        menuz.SetCommand(actionName, actionName)
     }
 
     log(string) {
-        if (IsObject(string)) {
-            string := json.dump(string)
-        }
-        FileAppend, % string "`n", % quickz.self.logFile
+        ; if (IsObject(string)) {
+        ;     string := json.dump(string)
+        ; }
+        FileAppend, % "`n" A_YYYY "/" A_MM "/" A_DD " " A_Hour ":" A_Min ":" A_Sec " [ " string.workdir " ] " string.command  " " string.param , % quickz.self.logFile
     }
 }

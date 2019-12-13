@@ -44,6 +44,7 @@ color:
     - name: ConEmu
       icon: %conemu%:0
       exec: %conemu%
+      workdir: D:\Git
 
     - name:
 
@@ -115,6 +116,12 @@ color:
       icon: %docker%:0
       exec: <sendtext><sendenter>
       param: docker-compose down
+
+    - name: "Docker copy"
+      icon: %docker%:0
+      exec: %docker%
+      param: cp {box:file} {text}:/root
+
 
 - ""
 

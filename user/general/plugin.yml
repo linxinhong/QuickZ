@@ -4,3 +4,21 @@
   version: 1.0
   info: "常用功能"
   include: "general.ahk"
+commands: 
+    - command: donw 
+      title: 向下移动
+
+    - command: up
+      title: 向上移动
+
+    - command: left
+      title: 向左移动
+
+    - command: right
+      title: 向右移动
+
+    - command: menuActive
+      title: 选择并激活菜单
+
+    - command: repeat
+      title: 重复上一次操作

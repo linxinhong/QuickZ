@@ -1,14 +1,14 @@
 ﻿everything_init() {
-    quickz.comment("everything_change_to_insert", "切换到Insert模式")
-    quickz.comment("everything_change_to_normal", "切换到Noraml模式")
-    quickz.comment("everything_filter_all", "筛选器-所有")
-    quickz.comment("everything_filter_music", "筛选器-音频")
-    quickz.comment("everything_filter_compress", "筛选器-压缩文件")
-    quickz.comment("everything_filter_document", "筛选器-文档")
-    quickz.comment("everything_filter_exec", "筛选器-可执行文件")
-    quickz.comment("everything_filter_folder", "筛选器-文件夹")
-    quickz.comment("everything_filter_image", "筛选器-图片")
-    quickz.comment("everything_filter_video", "筛选器-视频")
+    quickz.SetCommand("everything_change_to_insert", "切换到Insert模式")
+    quickz.SetCommand("everything_change_to_normal", "切换到Noraml模式")
+    quickz.SetCommand("everything_filter_all", "筛选器-所有")
+    quickz.SetCommand("everything_filter_music", "筛选器-音频")
+    quickz.SetCommand("everything_filter_compress", "筛选器-压缩文件")
+    quickz.SetCommand("everything_filter_document", "筛选器-文档")
+    quickz.SetCommand("everything_filter_exec", "筛选器-可执行文件")
+    quickz.SetCommand("everything_filter_folder", "筛选器-文件夹")
+    quickz.SetCommand("everything_filter_image", "筛选器-图片")
+    quickz.SetCommand("everything_filter_video", "筛选器-视频")
 }
 
 everything_filter_all() {

@@ -16,4 +16,4 @@ vimd.map()
 动作
 ----------------
 
-vimd.comment()
+vimd.SetCommand()
