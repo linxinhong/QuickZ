@@ -102,14 +102,6 @@ class gesturez {
                 if (ElapsedTime < gesturez.self.ElapsedTime) {
                     send {%A_ThisHotkey%}
                 }
-                else {
-                    if (OCRMode) {
-                        gesturez.Review()
-                    }
-                    else {
-                        gesturez.DoAction(DirectionList)
-                    }
-                }
                 if (IsDrawLine and pToken) {
                     Gdip_DeletePen(pPen)
                     SelectObject(hdc, obm)
@@ -117,6 +109,14 @@ class gesturez {
                     DeleteDC(hdc)
                     Gdip_DeleteGraphics(G)
                     Gdip_Shutdown(pToken)
+                }
+                if (ElapsedTime >= gesturez.self.ElapsedTime) {
+                    if (OCRMode) {
+                        gesturez.Review()
+                    }
+                    else {
+                        gesturez.DoAction(DirectionList)
+                    }
                 }
                 break
             }
