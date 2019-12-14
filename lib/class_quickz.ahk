@@ -69,7 +69,7 @@
                 for name, action in this.gesture
                 {
                     gesturez.add(name, action)
-                    quickz.log({command: name, param: action, workdir: this.name})
+                    quickz.log({content: "gesture: " name " = " action, topic: "Plugin: " this.name})
                 }
             }
         }
@@ -79,7 +79,7 @@
                 for key , value in this.var
                 {
                     menuz.SetVar(key, value)
-                    quickz.log({command: key, param: value, workdir: this.name})
+                    quickz.log({content: "Var: " key " = " value, topic: "Plugin: " this.name})
                 }
             }
         }
@@ -168,6 +168,6 @@
         ; if (IsObject(string)) {
         ;     string := json.dump(string)
         ; }
-        FileAppend, % "`n" A_YYYY "/" A_MM "/" A_DD " " A_Hour ":" A_Min ":" A_Sec " [ " string.workdir " ] " string.command  " " string.param , % quickz.self.logFile
+        FileAppend, % "`n" A_YYYY "/" A_MM "/" A_DD " " A_Hour ":" A_Min ":" A_Sec " [ " string.topic " ] " string.content , % quickz.self.logFile
     }
 }

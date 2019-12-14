@@ -14,3 +14,7 @@ WinClose() {
 WinMaximize() {
   WinMaximize, A
 }
+
+calc() {
+  run calc
+}

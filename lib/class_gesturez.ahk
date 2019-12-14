@@ -12,7 +12,7 @@ class gesturez {
             this.gestureList := {}
             this.gestruePNGdir := A_ScriptDir "\ges\"
             this.gesturePNGSave := false
-            this.ElapsedTime := 200
+            this.ElapsedTime := 120
             this.OCRMode := false
             this.OCRMode_min_direction_count := 1
         }
@@ -67,6 +67,7 @@ class gesturez {
 
     DoAction(gesName) {
         Action := gesturez.self.gestureList[gesName]
+        quickz.log({topic: "GestureZ", content: "name: " gesName " action: " Action})
         if (IsFunc(Action)) {
             Func(Action).call()
         }
@@ -84,30 +85,18 @@ class gesturez {
         OCRMode_min_direction_count := gesturez.self.OCRMode_min_direction_count
         direction_count := 0
         gesturez.self.action := action
+        IsDrawLine := false
         StartTime := A_TickCount
         MouseGetPos, x_init, y_init, win, ctrl
         x_start := x_init
         y_start := y_init
         x_angle_start := x_init
         y_angle_start := y_init
-        if (not pToken := GDIP_StartUp()) {
-            return
-        }
-        Width := A_ScreenWidth , Height := A_ScreenHeight
-        Gui, gesturez: -Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop
-        Gui, gesturez: Show, NA W%Width% H%Height%
-        Gui, gesturez: Default
-        hwnd1 := WinExist()
-        hbm := CreateDIBSection(Width, Height)
-        hdc := CreateCompatibleDC()
-        obm := SelectObject(hdc, hbm)
-        G := Gdip_GraphicsFromHDC(hdc)
-        Gdip_SetSmoothingMode(G, 4)
-        pPen := Gdip_CreatePen(gesturez.ARGB_FromRGB(0xAA, 0xff), 3)
-        gesturez.self.pr := new gesturez.PosRecord(Width, Height)
         Loop {
             if (not GetKeyState("RButton", "P")) {
-                GUI, gesturez:Destroy
+                if (IsDrawLine) {
+                    GUI, gesturez:Destroy
+                }
                 WinActive("ahk_id " win)
                 ElapsedTime := A_TickCount - StartTime
                 if (ElapsedTime < gesturez.self.ElapsedTime) {
@@ -121,12 +110,14 @@ class gesturez {
                         gesturez.DoAction(DirectionList)
                     }
                 }
-                Gdip_DeletePen(pPen)
-                SelectObject(hdc, obm)
-                DeleteObject(hbm)
-                DeleteDC(hdc)
-                Gdip_DeleteGraphics(G)
-                Gdip_Shutdown(pToken)
+                if (IsDrawLine and pToken) {
+                    Gdip_DeletePen(pPen)
+                    SelectObject(hdc, obm)
+                    DeleteObject(hbm)
+                    DeleteDC(hdc)
+                    Gdip_DeleteGraphics(G)
+                    Gdip_Shutdown(pToken)
+                }
                 break
             }
             MouseGetPos, x_end, y_end
@@ -150,6 +141,24 @@ class gesturez {
                 OCRMode := true
             }
             if (moveradius >= 3) {
+                if (not IsDrawLine) {
+                    Width := A_ScreenWidth , Height := A_ScreenHeight
+                    gesturez.self.pr := new gesturez.PosRecord(Width, Height)
+                    Gui, gesturez: -Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop
+                    Gui, gesturez: Show, NA W%Width% H%Height%
+                    Gui, gesturez: Default
+                    hwnd1 := WinExist()
+                    if (not pToken := GDIP_StartUp()) {
+                        return
+                    }
+                    hbm := CreateDIBSection(Width, Height)
+                    hdc := CreateCompatibleDC()
+                    obm := SelectObject(hdc, hbm)
+                    G := Gdip_GraphicsFromHDC(hdc)
+                    Gdip_SetSmoothingMode(G, 4)
+                    pPen := Gdip_CreatePen(gesturez.ARGB_FromRGB(0xAA, 0xff), 3)
+                    IsDrawLine := true
+                }
                 Gdip_DrawLine(G, pPen, x_start, y_start, x_end, y_end)
                 gesturez.self.pr.push(x_start, y_start, x_end, y_end)
                 x_start := x_end
@@ -190,8 +199,10 @@ class gesturez {
         Gdip_DisposeImage(pBitmap)
         Gdip_DeleteGraphics(G2)
         Gdip_Shutdown(pToken)
+        tooltip 识别手势中...
         RunWaitOne( A_ScriptDir "\lib\tesseract.exe  " pfile " " A_TEMP "\gesturez.output -l gesture --psm 7 --tessdata-dir " A_ScriptDir "\lib")
         FileRead, gestext, %A_TEMP%\gesturez.output.txt
+        tooltip
         gesturez.DoAction(SubStr(gestext, 1, strlen(gestext) - RegExMatch(gestext, "\n")))
     }
 

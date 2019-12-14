@@ -14,3 +14,5 @@ gesture:
   9: menuactive
   8: WinMinimize
   2: WinMaximize
+  c: calc
+  68: calc
