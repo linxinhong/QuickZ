@@ -16,3 +16,5 @@ gesture:
   2: WinMaximize
   c: calc
   68: calc
+  3: paste
+  1: copy

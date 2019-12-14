@@ -18,3 +18,11 @@ WinMaximize() {
 calc() {
   run calc
 }
+
+copy() {
+  send ^c
+}
+
+paste() {
+  send ^v
+}

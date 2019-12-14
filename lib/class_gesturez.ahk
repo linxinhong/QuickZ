@@ -12,9 +12,10 @@ class gesturez {
             this.gestureList := {}
             this.gestruePNGdir := A_ScriptDir "\ges\"
             this.gesturePNGSave := false
-            this.ElapsedTime := 120
+            this.ElapsedTime := 200
             this.OCRMode := false
             this.OCRMode_min_direction_count := 1
+            this.gdip_Token := Gdip_Startup()
         }
     }
 
@@ -79,6 +80,9 @@ class gesturez {
         }
     }
 
+    exit() {
+        GDIP_Shutdown(gesturez.self.gdip_Token)
+    }
     Recognize() {
         Critical
         OCRMode := gesturez.self.OCRMode
@@ -102,13 +106,12 @@ class gesturez {
                 if (ElapsedTime < gesturez.self.ElapsedTime) {
                     send {%A_ThisHotkey%}
                 }
-                if (IsDrawLine and pToken) {
+                if (IsDrawLine and gesturez.self.gdip_Token) {
                     Gdip_DeletePen(pPen)
                     SelectObject(hdc, obm)
                     DeleteObject(hbm)
                     DeleteDC(hdc)
                     Gdip_DeleteGraphics(G)
-                    Gdip_Shutdown(pToken)
                 }
                 if (ElapsedTime >= gesturez.self.ElapsedTime) {
                     if (OCRMode) {
@@ -148,7 +151,7 @@ class gesturez {
                     Gui, gesturez: Show, NA W%Width% H%Height%
                     Gui, gesturez: Default
                     hwnd1 := WinExist()
-                    if (not pToken := GDIP_StartUp()) {
+                    if (not gesturez.self.gdip_Token) {
                         return
                     }
                     hbm := CreateDIBSection(Width, Height)
@@ -175,8 +178,9 @@ class gesturez {
     Review() {
         pr := gesturez.self.pr
         pfile := gesturez.self.gestruePNGdir "GestureZ" A_Now ".png"
-        If !pToken := Gdip_Startup()
+        if (not gesturez.self.gdip_Token) {
             return
+        }
         width:= pr.xmax - pr.xmin + 20
         height:= pr.ymax - pr.ymin + 20
         xmin := pr.xmin - 10
@@ -198,7 +202,6 @@ class gesturez {
         Gdip_DeletePen(pPen)
         Gdip_DisposeImage(pBitmap)
         Gdip_DeleteGraphics(G2)
-        Gdip_Shutdown(pToken)
         tooltip 识别手势中...
         RunWaitOne( A_ScriptDir "\lib\tesseract.exe  " pfile " " A_TEMP "\gesturez.output -l gesture --psm 7 --tessdata-dir " A_ScriptDir "\lib")
         FileRead, gestext, %A_TEMP%\gesturez.output.txt

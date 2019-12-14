@@ -170,4 +170,8 @@
         ; }
         FileAppend, % "`n" A_YYYY "/" A_MM "/" A_DD " " A_Hour ":" A_Min ":" A_Sec " [ " string.topic " ] " string.content , % quickz.self.logFile
     }
+
+    exit() {
+        gesturez.exit()
+    }
 }
