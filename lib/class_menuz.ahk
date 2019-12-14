@@ -45,14 +45,12 @@
                         else if (RegExMatch(tagMatch2, "^[\s|]$")) {
                             Operator := "OR"
                         }
-                        quickz.log({topic: "debug", content: item.name " " tagMatch " " env.JudgeFilterTag(tagMatch1) " " Operator })
                         allowAdd := (Operator == "AND") ? (allowAdd and tagResult) : (allowAdd or tagResult)
                     }
                     else {
                         break
                     }
                 }
-                quickz.log({topic: "debug", content: item.filter " " allowAdd })
             }
             if (allowAdd) {
                 if (IsObject(item.peer)) {
