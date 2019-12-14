@@ -3,11 +3,13 @@
 
     class instance {
         __new() {
+            debug := 1
             this.Plugins := {}
             this.Actions := {}
             this.UserDir := A_ScriptDir "\User"
             this.IncludeFile := this.UserDir "\include.ahk"
             this.LogFile := this.UserDir "\run.log"
+            this.logLevel := debug
         }
     }
 
@@ -20,7 +22,7 @@
             this.include :=  plugin.plugin.include
             this.init    :=  plugin.plugin.init
             this.config  :=  plugin.config
-            this.commands :=  plugin.plugin.commands
+            this.commands :=  plugin.commands
             this.vimd    :=  plugin.vimd
             this.menu    :=  plugin.menu
             this.gesture :=  plugin.gesture
@@ -59,10 +61,11 @@
         }
 
         LoadMenuZ() {
-            if (this.menu.()) {
-                menuz.FromObject(this.YamlToMenu(this.menu))
+            if (IsObject(this.menu)) {
+                menuz.FromObject(this.menu)
             }
         }
+
 
         LoadGestureZ() {
             if (IsObject(this.gesture)) {
@@ -115,11 +118,33 @@
 
     }
 
+    Init() {
+        menuz.self := new menuz.instance()
+        vimd.self := new vimd.instance()
+        gesturez.self := new gesturez.instance()
+    }
 
-    LoadPlugins() {
+
+    LoadPluginsyaml() {
         Loop Files, % quickz.self.UserDir "\plugin.yml", R
         {
             p := yaml(A_LoopFileFullPath)
+            if IsObject(p.plugin) {
+                qPlugin := new quickz.Plugin(p)
+                qPlugin.dir := A_LoopFileDir
+                SplitPath, A_LoopFileFullPath, , , , OutNameNoExt
+                name := StrLen(p.plugin.name) ? p.plugin.name : OutNameNoExt
+                quickz.self.Plugins[name] := qPlugin
+            }
+        }
+    }
+
+    LoadPlugins() {
+        Loop Files, % quickz.self.UserDir "\plugin.json", R
+        {
+            p := yaml(A_LoopFileFullPath)
+            FileRead, jsonString, %A_LoopFileFullPath%
+            p := json.load(jsonString)
             if IsObject(p.plugin) {
                 qPlugin := new quickz.Plugin(p)
                 qPlugin.dir := A_LoopFileDir
@@ -165,9 +190,9 @@
     }
 
     log(string) {
-        ; if (IsObject(string)) {
-        ;     string := json.dump(string)
-        ; }
+        if (quickz.self.logLevel < 1) and (string.topic == "debug") {
+            return
+        }
         FileAppend, % "`n" A_YYYY "/" A_MM "/" A_DD " " A_Hour ":" A_Min ":" A_Sec " [ " string.topic " ] " string.content , % quickz.self.logFile
     }
 

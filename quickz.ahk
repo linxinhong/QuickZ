@@ -7,6 +7,7 @@ CoordMode, Mouse, Screen
 SetKeyDelay, -1
 SetControlDelay,-1
 
+quickz.Init()
 quickz.LoadPlugins()
 quickz.InitPlugins()
 
@@ -116,7 +117,7 @@ return
 return
 
 !x::reload
-CapsLock::menuz.Active()
+!q::menuz.Active()
 
 RButton::
     gesturez.Recognize()

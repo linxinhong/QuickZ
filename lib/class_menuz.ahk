@@ -179,7 +179,7 @@
         param := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.Param))
         workdir := menuz.ReplaceTag(menuz.ReplaceVar(itemObject.workdir))
         if (StrLen(command) or StrLen(param)) {
-            quickz.log({command: command, param: param, workdir: workdir})
+            quickz.log({topic: workdir, content: command " " param})
             if (env.IsBreak) {
                 return
             }
@@ -235,16 +235,17 @@
         Loop {
             if (tagPos := RegExMatch(varString, "%([^%]*)%", tagMatch, tagPos)) {
                 tagPos := tagPos + StrLen(tagMatch) -1
-                varTarget := menuz.self.varList[tagMatch1]
-                if (IsFunc(varTarget)){
-                    repString := Func(varTarget).call(env)
-                }
-                else if (IsObject(varTarget)) {
-                    repString := varTarget.call(env)
-                }
-                else {
-                    repString := varTarget
-                }
+                repString := menuz.self.varList[tagMatch1]
+                ; varTarget := menuz.self.varList[tagMatch1]
+                ; if (IsFunc(varTarget)){
+                ;     repString := Func(varTarget).call(env)
+                ; }
+                ; else if (IsObject(varTarget)) {
+                ;     repString := varTarget.call(env)
+                ; }
+                ; else {
+                ;     repString := varTarget
+                ; }
                 template := StrReplace(template, tagMatch , repString)
             }
             else {

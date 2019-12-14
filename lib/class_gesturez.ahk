@@ -4,9 +4,9 @@ DetectHiddenWindows On
 
 
 class gesturez {
-    static self := new gesturez._instance
+    static self := new gesturez.instance
 
-    class _instance {
+    class instance {
         __new() {
             this.pr := {}
             this.gestureList := {}
@@ -14,7 +14,7 @@ class gesturez {
             this.gesturePNGSave := false
             this.ElapsedTime := 200
             this.OCRMode := false
-            this.OCRMode_min_direction_count := 1
+            this.OCRMode_min_direction_count := 2
             this.gdip_Token := Gdip_Startup()
         }
     }
