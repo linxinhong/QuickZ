@@ -30,6 +30,9 @@
             item.filter := menuz.ReplaceVar(item.filter)
             allowAdd := true
             if ( StrLen(item.filter) ) {
+                if (env.isFileMulti and not RegExMatch(item.filter, "i){only:(.*)}")) {
+                    allowAdd := env.JudgeFilterTag("{only:file}")
+                }
                 Operator := "AND"
                 tagPos := 1
                 Loop {
@@ -42,12 +45,14 @@
                         else if (RegExMatch(tagMatch2, "^[\s|]$")) {
                             Operator := "OR"
                         }
-                        allowAdd := Operator == "AND" ? allowAdd and tagResult : allowAdd or tagResult
+                        quickz.log({topic: "debug", content: item.name " " tagMatch " " env.JudgeFilterTag(tagMatch1) " " Operator })
+                        allowAdd := (Operator == "AND") ? (allowAdd and tagResult) : (allowAdd or tagResult)
                     }
                     else {
                         break
                     }
                 }
+                quickz.log({topic: "debug", content: item.filter " " allowAdd })
             }
             if (allowAdd) {
                 if (IsObject(item.peer)) {
@@ -583,7 +588,16 @@
                 return this.RuleTest(match1, onlyType)
             }
             else if (RegExMatch(tag, "i)^{ext:(.*)}$", match)) {
-                return this.RuleTest(match1, this.file.ext)
+                if ( this.isFileMulti ) {
+                    extTest := true
+                    for ext, num in this.fileMulti.extList {
+                        extTest := extTest and this.RuleTest(match1, ext)
+                    }
+                    return extTest
+                }
+                else {
+                  return this.RuleTest(match1, this.file.ext)
+                }
             }
             else if (RegExMatch(tag, "i)^{filename:(.*)}$", match)) {
                 return this.RuleTest(match1, this.file.name)
@@ -717,6 +731,5 @@
             ,"ymargin"    : 3    ;margin for the top and bottom of item boundary
             ,"textMargin" : 5 }  ;pixels amount which will be added after the text to make menu look pretty
         }
-
     }
 }
