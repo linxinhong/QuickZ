@@ -1,0 +1,10 @@
+{
+    "plugin": {
+        "name": "createplugin",
+        "author": "Array",
+        "version": "1.0",
+        "info": "新建插件",
+        "include": "createplugin.ahk",
+        "init": "createplugin_init"
+    }
+}

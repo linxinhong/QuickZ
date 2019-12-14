@@ -9,7 +9,7 @@
   docker: C:\Program Files\Docker\Docker\resources\bin\docker.exe
 
 filter:
-  textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim
+  textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim, json
 
 color:
   black: 0x232323
@@ -19,6 +19,10 @@ color:
   exec: %chrome%
   param: text}
   filter: "{tt:=url}"
+
+- name: "yml2json"
+  filter: "{ext:=yml}"
+  exec: "<yml2json>"
 
 - name: "ConEmu打开路径"
   icon: %conemu%:0

@@ -1,0 +1,22 @@
+{
+  "plugin": {
+    "author": "Array",
+    "include": "gesture.ahk",
+    "info": " ÷ ∆",
+    "init": "gesture_init",
+    "name": "gesture",
+    "version": 1,
+    "changelog": "changelog.md",
+    "readme": "readme.md"
+  },
+  "commands": "",
+  "config": "",
+  "var": null,
+  "gesture": {
+    "2": "ctrla",
+    "6": "tess_sendnum",
+    "8": "WinMinimize",
+    "9": "menuactive",
+    "c": "calc"
+  }
+}

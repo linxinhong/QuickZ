@@ -1,7 +1,0 @@
-﻿plugin:
-  name: "createplugin"
-  author: Array
-  version: 1.0
-  info: "创建新插件"
-  include: "createplugin.ahk"
-  init: "createplugin_init"

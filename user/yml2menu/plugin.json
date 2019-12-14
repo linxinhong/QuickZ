@@ -1,0 +1,10 @@
+﻿{
+  "plugin": {
+    "name": "yml2menu",
+    "author": "Array",
+    "version": 1,
+    "info": "yml风格的菜单配置",
+    "include": "loadmenu.ahk",
+    "init": "yml2menu_init"
+  }
+}

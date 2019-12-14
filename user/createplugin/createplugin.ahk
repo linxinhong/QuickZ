@@ -1,5 +1,6 @@
 ﻿createPlugin_init() {
     menuz.SetCommand("createplugin", "createplugin")
+    menuz.SetCommand("yml2json", "yml2json")
 }
 
 CreatePlugin(env, item) {
@@ -64,4 +65,16 @@ vimd:
     else {
         msgbox % "插件：" pluginName "已经存在"
     }
+}
+
+yml2json(env, item) {
+  newJson := {}  
+  yml := yaml(env.file.path)
+  newJson["plugin"] := yml.plugin
+  newJson["commands"] := yml.commands
+  newJson["config"] := yml.config
+  newJson["vars"] := yml.var
+  newJson["vimd"] := yml.vimd
+  newJson["gesture"] := yml.gesture
+  FileAppend, % json.dump(newJson, 4), % env.file.dir "\" env.file.namenoext ".json"
 }
