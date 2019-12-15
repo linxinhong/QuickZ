@@ -1,0 +1,6 @@
+tesseractinit() {
+
+}
+tesseract() {
+
+}

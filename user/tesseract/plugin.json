@@ -1,0 +1,145 @@
+﻿{
+  "plugin": {
+    "author": "",
+    "include": "tesseract.ahk",
+    "info": "",
+    "init": "tesseract_init",
+    "name": "tesseract",
+    "version": 1,
+    "changelog": "changelog.md",
+    "readme": "readme.md"
+  },
+  "var": {
+    "tesseract": "D:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe",
+    "unicharset_extractor": "D:\\Program Files (x86)\\Tesseract-OCR\\unicharset_extractor.exe",
+    "shapeclustering": "D:\\Program Files (x86)\\Tesseract-OCR\\shapeclustering.exe",
+    "mftraining": "D:\\Program Files (x86)\\Tesseract-OCR\\mftraining.exe",
+    "cntraining": "D:\\Program Files (x86)\\Tesseract-OCR\\cntraining.exe",
+    "combine_tessdata": "D:\\Program Files (x86)\\Tesseract-OCR\\combine_tessdata.exe",
+    "tess_data_name": "gesture",
+    "tess_lang": "gesture"
+  },
+  "commands": "",
+  "config": "",
+  "menu": [
+    {
+      "name": "0 tesseract-> tif 转 box",
+      "filter": "{ext:=tif}",
+      "exec": "%tesseract%",
+      "param": "\"{file:path}\" {file:namenoext} -l %tess_lang% --psm 7 batch.nochop makebox",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "1 tesseract -> 生成 font_properties",
+      "filter": "{ext:=box}",
+      "exec": "%cmd%",
+      "param": "/C echo {file:namenoext} 0 0 0 0 0 > {file:dir}\\font_properties",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "2 tesseract-> 生成训练文件",
+      "filter": "{ext:=tif}",
+      "exec": "%tesseract%",
+      "param": "\"{file:path}\" {file:namenoext} -l %tess_lang% --psm 7 nochop box.train",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "3 tesseract -> 生成字符集文件",
+      "filter": "{ext:=box}",
+      "exec": "%unicharset_extractor%",
+      "param": "{file:path}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "4 tesseract -> 生成shape文件",
+      "filter": "{ext:=tr}",
+      "exec": "%shapeclustering%",
+      "param": "-F font_properties -U unicharset -O {file:namenoext}.unicharset {file:path}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "5 tesseract -> 生成聚集字符特征文件",
+      "filter": "{ext:=tr}",
+      "exec": "%mftraining%",
+      "param": "-F font_properties -U unicharset -O {file:namenoext}.unicharset {file:path}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "6 tesseract -> 生成字符正常化特征文件",
+      "filter": "{ext:=tr}",
+      "exec": "%cntraining%",
+      "param": "{file:path}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "7 tesseract -> 文件名前添加%tess_data_name%",
+      "filter": "{ext:=*NoExt}",
+      "exec": "%cmd%",
+      "param": "/C rename \"{file:path}\" %tess_data_name%.{file:name}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "8 tesseract -> 合并训练文件",
+      "filter": "{ext:=box}",
+      "exec": "%combine_tessdata%",
+      "param": "{file:namenoext}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "9 tesseract -> 复制到tessdata",
+      "filter": "{ext:=traineddata}",
+      "exec": "%cmd%",
+      "param": "/C copy \"{file:path}\" \"D:\\Git\\ahk\\Vis2\\bin\\tesseract\"",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "10 tesseract -> 测试 eng",
+      "filter": "{ext:=png}",
+      "exec": "%tesseract%",
+      "param": "\"{file:path}\" output -l %tess_lang% --psm 7",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "11 tesseract -> 测试新模型",
+      "filter": "{ext:=png}",
+      "exec": "%tesseract%",
+      "param": "\"{file:path}\" output -l l1 --psm 7 --tessdata-dir D:\\Git\\ahk\\Vis2\\bin\\tesseract\\",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "23 tesseract -> 生成字符集文件",
+      "filter": "{ext:=box},{only:=list}",
+      "exec": "%unicharset_extractor%",
+      "param": "{list: \"[path]\"}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "24 tesseract -> 生成shape文件",
+      "exec": "%shapeclustering%",
+      "filter": "{ext:=tr},{only:=list}",
+      "param": "-F font_properties -U unicharset -O megre.unicharset {file: \"[path]\"}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "25 tesseract -> 生成聚集字符特征文件",
+      "filter": "{ext:=tr},{only:=list}",
+      "exec": "%mftraining%",
+      "param": "-F font_properties -U unicharset -O megre.unicharset {file: \"[path]\"}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "26 tesseract -> 生成字符正常化特征文件",
+      "filter": "{ext:=tr},{only:=list}",
+      "exec": "%cntraining%",
+      "param": " {file: \"[path]\"}",
+      "workdir": "{file:dir}"
+    },
+    {
+      "name": "27 tesseract -> 合并训练文件",
+      "filter": "{ext:=box}",
+      "exec": "%combine_tessdata%",
+      "param": "gesture",
+      "workdir": "{file:dir}"
+    }
+  ]
+}
