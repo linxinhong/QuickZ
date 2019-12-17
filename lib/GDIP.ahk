@@ -1546,6 +1546,81 @@ Gdip_SaveBitmapToFile(pBitmap, sOutput, Quality=75)
 	return E ? -5 : 0
 }
 
+Gdip_SaveBitmapToStream(pBitmap, ByRef Buffer, Extension="png", Quality=75)
+{
+	Ptr := A_PtrSize ? "UPtr" : "UInt"
+
+	Extension := "." Extension
+
+	DllCall("gdiplus\GdipGetImageEncodersSize", "uint*", nCount, "uint*", nSize)
+	VarSetCapacity(ci, nSize)
+	DllCall("gdiplus\GdipGetImageEncoders", "uint", nCount, "uint", nSize, Ptr, &ci)
+	if !(nCount && nSize)
+		return -2
+
+	If (A_IsUnicode){
+		StrGet_Name := "StrGet"
+		Loop, %nCount%
+		{
+			sString := %StrGet_Name%(NumGet(ci, (idx := (48+7*A_PtrSize)*(A_Index-1))+32+3*A_PtrSize), "UTF-16")
+			if !InStr(sString, "*" Extension)
+				continue
+
+			pCodec := &ci+idx
+			break
+		}
+	} else {
+		Loop, %nCount%
+		{
+			Location := NumGet(ci, 76*(A_Index-1)+44)
+			nSize := DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "uint", 0, "int",  0, "uint", 0, "uint", 0)
+			VarSetCapacity(sString, nSize)
+			DllCall("WideCharToMultiByte", "uint", 0, "uint", 0, "uint", Location, "int", -1, "str", sString, "int", nSize, "uint", 0, "uint", 0)
+			if !InStr(sString, "*" Extension)
+				continue
+
+			pCodec := &ci+76*(A_Index-1)
+			break
+		}
+	}
+
+	if !pCodec
+		return -3
+
+	if (Quality != 75)
+	{
+		Quality := (Quality < 0) ? 0 : (Quality > 100) ? 100 : Quality
+		if Extension in .JPG,.JPEG,.JPE,.JFIF
+		{
+			DllCall("gdiplus\GdipGetEncoderParameterListSize", Ptr, pBitmap, Ptr, pCodec, "uint*", nSize)
+			VarSetCapacity(EncoderParameters, nSize, 0)
+			DllCall("gdiplus\GdipGetEncoderParameterList", Ptr, pBitmap, Ptr, pCodec, "uint", nSize, Ptr, &EncoderParameters)
+			Loop, % NumGet(EncoderParameters, "UInt")      ;%
+			{
+				elem := (24+(A_PtrSize ? A_PtrSize : 4))*(A_Index-1) + 4 + (pad := A_PtrSize = 8 ? 4 : 0)
+				if (NumGet(EncoderParameters, elem+16, "UInt") = 1) && (NumGet(EncoderParameters, elem+20, "UInt") = 6)
+				{
+					p := elem+&EncoderParameters-pad-4
+					NumPut(Quality, NumGet(NumPut(4, NumPut(1, p+0)+20, "UInt")), "UInt")
+					break
+				}
+			}
+		}
+	}
+	DllCall( "ole32\CreateStreamOnHGlobal", "uint", 0, "int",1, "UIntP", pStream )
+	DllCall( "gdiplus\GdipSaveImageToStream", "Uint" , pBitmap, "Uint", pStream, "UInt", pCodec, "UInt", p ? p : 0)
+	DllCall( "gdiplus\GdipDisposeImage", "uint", pBitmap)
+	DllCall( "ole32\GetHGlobalFromStream", "UInt", pStream, "UIntP", hData )
+	pData := DllCall( "GlobalLock", "UInt", hData )
+ 	nSize := DllCall( "GlobalSize", "UInt", pData )
+	VarSetCapacity(Buffer, nSize, 0)
+	DllCall( "RtlMoveMemory", "UInt", &Buffer, "UInt", pData, "UInt",nSize )
+ 	DllCall( "GlobalUnlock", "UInt", hData )
+ 	DllCall( NumGet( NumGet( 1*pStream ) + 8 ), "UInt", pStream )
+ 	DllCall( "GlobalFree", "UInt", hData )
+	return nSize
+}
+
 ;#####################################################################################
 
 ; Function				Gdip_GetPixel
@@ -2711,3 +2786,24 @@ StrGetB(Address, Length=-1, Encoding=0)
 
 	return String
 }
+
+Gdip_ResizeBitmap(pBitmap, PercentOrWH, Dispose=1) {	; returns resized bitmap. By Learning one.
+	Gdip_GetImageDimensions(pBitmap, origW, origH)
+	if PercentOrWH contains w,h
+	{
+		RegExMatch(PercentOrWH, "i)w(\d*)", w), RegExMatch(PercentOrWH, "i)h(\d*)", h)
+		NewWidth := w1, NewHeight := h1
+		NewWidth := (NewWidth = "") ? origW/(origH/NewHeight) : NewWidth
+		NewHeight := (NewHeight = "") ? origH/(origW/NewWidth) : NewHeight
+	}
+	else {
+		NewWidth := origW*PercentOrWH/100, NewHeight := origH*PercentOrWH/100		
+	}
+	pBitmap2 := Gdip_CreateBitmap(NewWidth, NewHeight)
+	G2 := Gdip_GraphicsFromImage(pBitmap2), Gdip_SetSmoothingMode(G2, 4), Gdip_SetInterpolationMode(G2, 7)
+	Gdip_DrawImage(G2, pBitmap, 0, 0, NewWidth, NewHeight)
+	Gdip_DeleteGraphics(G2)
+	if Dispose
+		Gdip_DisposeImage(pBitmap)
+	return pBitmap2
+}	; http://www.autohotkey.com/community/viewtopic.php?p=477333#p477333

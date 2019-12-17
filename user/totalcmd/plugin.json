@@ -19,7 +19,7 @@
         "mapnum": true,
         "default": true,
         "map": {
-          "<esc>": "totalcmd_clear",
+          "<esc>": "totalcmd_esc",
           "j": "down",
           "k": "up",
           "l": "right",

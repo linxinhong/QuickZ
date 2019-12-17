@@ -9,7 +9,7 @@
   docker: C:\Program Files\Docker\Docker\resources\bin\docker.exe
 
 filter:
-  textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim, json
+  textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim, json, h
 
 color:
   black: 0x232323

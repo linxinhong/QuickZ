@@ -1,11 +1,12 @@
 ﻿#NoEnv 
 #SingleInstance, Force
-SetBatchLines, -1
+;SetBatchLines, -1
 SendMode Input
 SetWorkingDir %A_ScriptDir%
-CoordMode, Mouse, Screen
 SetKeyDelay, -1
 SetControlDelay,-1
+DetectHiddenWindows On
+CoordMode, Mouse, Screen
 
 quickz.Init()
 quickz.LoadPlugins()
@@ -126,6 +127,7 @@ return
 #include lib\class_vimd.ahk
 #include lib\class_menuz.ahk
 #include lib\class_gesturez.ahk
+#include lib\class_tesseract.ahk
 #include lib\class_quickz.ahk
 #include lib\class_json.ahk
 #include lib\class_easyini.ahk

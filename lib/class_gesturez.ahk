@@ -1,7 +1,4 @@
-﻿CoordMode, mouse, Screen
-; SetBatchLines, -1
-DetectHiddenWindows On
-
+﻿
 
 class gesturez {
     static self := new gesturez.instance
@@ -12,10 +9,11 @@ class gesturez {
             this.gestureList := {}
             this.gestruePNGdir := A_ScriptDir "\ges\"
             this.gesturePNGSave := false
+            this.showDraw := true
             this.ElapsedTime := 200
             this.OCRMode := false
             this.OCRMode_min_direction_count := 2
-            this.gdip_Token := Gdip_Startup()
+            this.tess := new tesseract(A_ScriptDir "\lib", "gesture", A_ScriptDir "\lib\tesseract50.dll", A_ScriptDir "\lib\leptonica1780.dll")
         }
     }
 
@@ -56,7 +54,6 @@ class gesturez {
             If (y2 <= this.ymin) {
                 this.ymin := y2
             }
-            ; tooltip % this.xmax "`n" this.xmin "`n" this.ymax "`n" this.ymin
         }
 
 
@@ -67,6 +64,9 @@ class gesturez {
     }
 
     DoAction(gesName) {
+        if ( not gesName ) {
+            return
+        }
         Action := gesturez.self.gestureList[gesName]
         quickz.log({topic: "GestureZ", content: "name: " gesName " action: " Action})
         if (IsFunc(Action)) {
@@ -80,11 +80,9 @@ class gesturez {
         }
     }
 
-    exit() {
-        GDIP_Shutdown(gesturez.self.gdip_Token)
-    }
     Recognize() {
         Critical
+        a := 1
         OCRMode := gesturez.self.OCRMode
         OCRMode_min_direction_count := gesturez.self.OCRMode_min_direction_count
         direction_count := 0
@@ -98,7 +96,7 @@ class gesturez {
         y_angle_start := y_init
         Loop {
             if (not GetKeyState("RButton", "P")) {
-                if (IsDrawLine) {
+                if (IsDrawLine and gesturez.self.ShowDraw) {
                     GUI, gesturez:Destroy
                 }
                 WinActive("ahk_id " win)
@@ -106,7 +104,7 @@ class gesturez {
                 if (ElapsedTime < gesturez.self.ElapsedTime) {
                     send {%A_ThisHotkey%}
                 }
-                if (IsDrawLine and gesturez.self.gdip_Token) {
+                if (IsDrawLine and gesturez.self.showDraw) {
                     Gdip_DeletePen(pPen)
                     SelectObject(hdc, obm)
                     DeleteObject(hbm)
@@ -120,6 +118,9 @@ class gesturez {
                     else {
                         gesturez.DoAction(DirectionList)
                     }
+                }
+                If (gdip_Token) {
+                    Gdip_Shutdown(gdip_Token)
                 }
                 break
             }
@@ -145,28 +146,32 @@ class gesturez {
             }
             if (moveradius >= 3) {
                 if (not IsDrawLine) {
-                    Width := A_ScreenWidth , Height := A_ScreenHeight
-                    gesturez.self.pr := new gesturez.PosRecord(Width, Height)
-                    Gui, gesturez: -Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop
-                    Gui, gesturez: Show, NA W%Width% H%Height%
-                    Gui, gesturez: Default
-                    hwnd1 := WinExist()
-                    if (not gesturez.self.gdip_Token) {
-                        return
+                    If (gdip_Token := Gdip_Startup()) {
+                        Width := A_ScreenWidth , Height := A_ScreenHeight
+                        gesturez.self.pr := new gesturez.PosRecord(Width, Height)
+                        if ( gesturez.self.ShowDraw ) {
+                            Gui, gesturez: -Caption +E0x80000 +LastFound +OwnDialogs +Owner +AlwaysOnTop
+                            Gui, gesturez: Show, NA W%Width% H%Height%
+                            Gui, gesturez: Default
+                            hwnd1 := WinExist()
+                            hbm := CreateDIBSection(Width, Height)
+                            hdc := CreateCompatibleDC()
+                            obm := SelectObject(hdc, hbm)
+                            G := Gdip_GraphicsFromHDC(hdc)
+                            Gdip_SetSmoothingMode(G, 4)
+                            pPen := Gdip_CreatePen(gesturez.ARGB_FromRGB(0xAA, 0xff), 3)
+                        }
                     }
-                    hbm := CreateDIBSection(Width, Height)
-                    hdc := CreateCompatibleDC()
-                    obm := SelectObject(hdc, hbm)
-                    G := Gdip_GraphicsFromHDC(hdc)
-                    Gdip_SetSmoothingMode(G, 4)
-                    pPen := Gdip_CreatePen(gesturez.ARGB_FromRGB(0xAA, 0xff), 3)
                     IsDrawLine := true
                 }
-                Gdip_DrawLine(G, pPen, x_start, y_start, x_end, y_end)
                 gesturez.self.pr.push(x_start, y_start, x_end, y_end)
+                if (gdip_Token and gesturez.self.ShowDraw) {
+                    Gdip_DrawLine(G, pPen, x_start, y_start, x_end, y_end)
+                    UpdateLayeredWindow(hwnd1, hdc, 0, 0, Width, Height)
+                    a += 1
+                }
                 x_start := x_end
                 y_start := y_end
-                UpdateLayeredWindow(hwnd1, hdc, 0, 0, Width, Height)
             }
             else {
                 sleep 50
@@ -177,10 +182,6 @@ class gesturez {
 
     Review() {
         pr := gesturez.self.pr
-        pfile := gesturez.self.gestruePNGdir "GestureZ" A_Now ".png"
-        if (not gesturez.self.gdip_Token) {
-            return
-        }
         width:= pr.xmax - pr.xmin + 20
         height:= pr.ymax - pr.ymin + 20
         xmin := pr.xmin - 10
@@ -197,16 +198,23 @@ class gesturez {
             pos := pr.list[A_Index]
             Gdip_DrawLine(G2, pPen, Pos.x1-xmin, Pos.y1-ymin, Pos.x2-xmin, Pos.y2-ymin)
         }
-        pBitmap := gesturez.Gdip_ResizeBitmap(pBitmap, "w16 h16")
-        Gdip_SaveBitmapToFile(pBitmap, pfile)
+        pBitmap := Gdip_ResizeBitmap(pBitmap, "w16 h16")
+        if (gesturez.self.gesturePNGSave) {
+          if FileExist(gesturez.self.gestruePNGdir) {
+              pfile := gesturez.self.gestruePNGdir "GestureZ" A_Now ".png"
+              Gdip_SaveBitmapToFile(pBitmap, pfile)
+          }
+          else {
+              msgbox % gesturez.self.gestruePNGdir " 目录不存在" 
+          }
+        }
+        size := Gdip_SaveBitmapToStream(pBitmap, buffer)
         Gdip_DeletePen(pPen)
         Gdip_DisposeImage(pBitmap)
         Gdip_DeleteGraphics(G2)
-        tooltip 识别手势中...
-        RunWaitOne( A_ScriptDir "\lib\tesseract.exe  " pfile " " A_TEMP "\gesturez.output -l gesture --psm 7 --tessdata-dir " A_ScriptDir "\lib")
-        FileRead, gestext, %A_TEMP%\gesturez.output.txt
-        tooltip
-        gesturez.DoAction(SubStr(gestext, 1, strlen(gestext) - RegExMatch(gestext, "\n")))
+        tess := gesturez.self.tess
+        gestext := Trim(tess.GetTextFromPix(tess.pixReadMem(&buffer, size)), OmitChars := " `t`r`n")
+        gesturez.DoAction(gestext)
     }
 
     GetRadius(StartX, StartY, EndX, EndY) {
@@ -269,32 +277,4 @@ class gesturez {
         A := A & 0xFF, RGB := RGB & 0xFFFFFF
         return ((RGB | (A << 24)) & 0xFFFFFFFF)
     }
-
-    Gdip_ResizeBitmap(pBitmap, PercentOrWH, Dispose=1) {	; returns resized bitmap. By Learning one.
-        Gdip_GetImageDimensions(pBitmap, origW, origH)
-        if PercentOrWH contains w,h
-        {
-            RegExMatch(PercentOrWH, "i)w(\d*)", w), RegExMatch(PercentOrWH, "i)h(\d*)", h)
-            NewWidth := w1, NewHeight := h1
-            NewWidth := (NewWidth = "") ? origW/(origH/NewHeight) : NewWidth
-            NewHeight := (NewHeight = "") ? origH/(origW/NewWidth) : NewHeight
-        }
-        else {
-            NewWidth := origW*PercentOrWH/100, NewHeight := origH*PercentOrWH/100		
-        }
-        pBitmap2 := Gdip_CreateBitmap(NewWidth, NewHeight)
-        G2 := Gdip_GraphicsFromImage(pBitmap2), Gdip_SetSmoothingMode(G2, 4), Gdip_SetInterpolationMode(G2, 7)
-        Gdip_DrawImage(G2, pBitmap, 0, 0, NewWidth, NewHeight)
-        Gdip_DeleteGraphics(G2)
-        if Dispose
-            Gdip_DisposeImage(pBitmap)
-        return pBitmap2
-    }	; http://www.autohotkey.com/community/viewtopic.php?p=477333#p477333
-}
-
-RunWaitOne(command) {
-    RunWait %comSpec% /c %command%, , hide 
-    ;shell := ComObjCreate("WScript.Shell")
-    ;exec := shell.Exec(ComSpec " /C " command)
-    ;return exec.StdOut.ReadAll()
 }

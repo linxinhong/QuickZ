@@ -18,8 +18,10 @@ totalcmd_onBeforeKey() {
     TC.onBeforekey()
 }
 
-totalcmd_clear() {
+totalcmd_esc() {
     vimd.clear("totalcmd")
+    totalcmd_change_to_normal()
+    send {esc}
 }
 
 totalcmd_AZHistory() {
