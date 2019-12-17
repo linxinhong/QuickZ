@@ -11,5 +11,4 @@ exitApp
 
 #include lib\class_quickz.ahk
 #include lib\Path_API.ahk
-#include user\include.ahk
 #include lib\class_json.ahk

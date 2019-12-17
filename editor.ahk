@@ -2,6 +2,9 @@
 #SingleInstance, force
 SetBatchLines, -1
 
+quickz.LoadPlugins()
+quickz.GenerateInclude()
+
 QZM.Listen(A_ScriptDir "\ui", 5210)
  ; The final parameter is the name of the ActiveX component.
 Gui Add, ActiveX, x0 y0 w980 h640 vWB, Shell.Explorer 
@@ -164,9 +167,8 @@ Class QZM {
 
 }
 
-!z::reload
-
 #include, lib\AHKhttp.ahk
 #include, lib\AHKsock.ahk
-#include, lib\Path_API.ahk
 #include, lib\class_json.ahk
+#include, lib\class_quickz.ahk
+#include, lib\Path_API.ahk
