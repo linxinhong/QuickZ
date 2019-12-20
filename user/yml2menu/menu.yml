@@ -7,17 +7,24 @@
   explorer: C:\windows\system32\explorer.exe
   conemu: D:\Program Files\cmder\vendor\conemu-maximus5\ConEmu.exe
   docker: C:\Program Files\Docker\Docker\resources\bin\docker.exe
+  spacesniffer: D:\Program Files (x86)\spacesniffer_1_3_0_2\SpaceSniffer.exe
 
 filter:
-  textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim, json, h
+  textfile: ahk, js, py, yml, yaml, txt, dockerfile, vim, json, h, pl
 
 color:
   black: 0x232323
 
+
+- name: spacesniffer
+  icon: %spacesniffer%:0
+  exec: %spacesniffer%
+  param: scan "{file:path}"
+  
 - name: "Chrome打开URL"
   icon: %chrome%:0
   exec: %chrome%
-  param: text}
+  param: {text}
   filter: "{tt:=url}"
 
 - name: "yml2json"
@@ -40,6 +47,10 @@ color:
 
 - name: 屏幕右下常用工具
   filter: "{pos:x>800 y>600}"
+  sub:
+    - name: "sub"
+      icon: %cmd%:0
+      exec: %cmd%
   peer:
     - name: "运行CMD"
       icon: %cmd%:0
@@ -130,6 +141,7 @@ color:
 - ""
 
 - name: "常用工具"
+  isPeer: true
   sub:
     - name: "everything"
       icon: %everything%:0

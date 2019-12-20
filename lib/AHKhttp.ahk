@@ -146,7 +146,9 @@ HttpHandler(sEvent, iSocket = 0, sName = 0, sAddr = 0, sPort = 0, ByRef bData = 
             request.bytesLeft := length + 0
 
             if (request.body) {
-                request.bytesLeft -= StrLen(request.body)
+                body := request.body
+                request.bytesLeft := StrLen(request.body) - request.bytesLeft
+                ;request.bytesLeft -= StrLen(request.body)
             }
         }
 
@@ -255,7 +257,7 @@ class HttpResponse
         length := this.headers["Content-Length"]
 
         buffer := new Buffer((StrLen(headers) * 2) + length)
-        buffer.WriteStr(headers, "CP0")
+        buffer.WriteStr(headers, "UTF-8")
 
         buffer.Append(this.body)
         buffer.Done()
@@ -302,6 +304,7 @@ class Socket
         p := this.data.GetPointer()
         length := this.data.length
 
+
         this.dataSent := 0
         loop {
             if ((i := AHKsock_Send(this.socket, p, length - this.dataSent)) < 0) {
@@ -336,7 +339,7 @@ class Buffer
     FromString(str, encoding = "UTF-8") {
         length := Buffer.GetStrSize(str, encoding)
         buffer := new Buffer(length)
-        buffer.WriteStr(str, "CP0")
+        buffer.WriteStr(str, encoding)
         return buffer
     }
 

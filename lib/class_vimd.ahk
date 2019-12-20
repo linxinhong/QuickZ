@@ -128,6 +128,7 @@
     } 
 
     _Key() {
+        static c := 0
         win := vimd.ActiveWin()
         mode := vimd.GetMode(win.name, win.modeExist)
         keyPress := vimd.CheckCapsLock(vimd.ConvertKeyVIM(A_ThisHotkey))
@@ -151,7 +152,7 @@
             }
             else if ( not mode.GetMore(keyCache) ) {
                 vimd.DoAction(mode.GetAction(keyCache), win.GetCount())
-                win.ClaerAll()
+                win.ClearAll()
                 return
             }
         }
@@ -453,6 +454,7 @@
             this.keyLast := ""
             this.count := 0
             this.SendRawOnce := false
+            this.isShowTip := false
             this.isRepeat := false
             this.isRecord := false
             this.isRecordPlay := false
@@ -497,10 +499,12 @@
             }
         }
 
-        ClaerAll() {
+        ClearAll() {
             this.ClearCount()
             this.ClearCache()
-            this.HideTip()
+            if (this.isShowTip) {
+                this.HideTip()
+            }
         }
 
         ClearCount() {
@@ -539,6 +543,7 @@
         }
         
         ShowTip(Text) {
+            this.isShowTip := true
             if (IsFunc(this.onShowTip)) {
                 Func(this.onShowTip).call(text, this)
             }
@@ -559,6 +564,7 @@
         }
 
         HideTip() {
+            this.isShowTip := false
             if (IsFunc(this.onHideTip)) {
                 Func(this.onHideTip).call(this)
             }
@@ -703,6 +709,3 @@
         }
     }
 }
-
-__vimd:
-    vimd.key()

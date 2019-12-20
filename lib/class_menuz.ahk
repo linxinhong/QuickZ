@@ -22,11 +22,6 @@
         Loop % menuList.MaxIndex()
         {
             item := menuList[A_Index]
-            if (item.HasKey("sub") and IsObject(item["sub"])) {
-                sm := menuz.self.createMenu()
-                menuz.Build(sm, item.sub, env)
-                item.submenu := sm
-            }
             item.filter := menuz.ReplaceVar(item.filter)
             allowAdd := true
             if ( StrLen(item.filter) ) {
@@ -53,6 +48,9 @@
                 }
             }
             if (allowAdd) {
+                if (item.isPeer) {
+                    item.peer := item.sub
+                }
                 if (IsObject(item.peer)) {
                     menuz.Build(parentMenu, item.peer, env)
                 }
@@ -60,6 +58,11 @@
                     parentMenu.add()
                 }
                 else if (not menuz.CheckDynamic(item.name, parentMenu)) {
+                    if (item.HasKey("sub") and IsObject(item["sub"])) {
+                        sm := menuz.self.createMenu()
+                        menuz.Build(sm, item.sub, env)
+                        item.submenu := sm
+                    }
                     item.name := menuz.ItemNameAlign(item.name)
                     item.icon := menuz.ReplaceVar(item.icon)
                     item.tcolor := menuz.ReplaceVar(item.tcolor)
@@ -679,6 +682,7 @@
             this.filter := config.filter
             this.sub := config.sub
             this.peer := config.peer
+            this.isPeer := config.isPeer
         }
     }
 

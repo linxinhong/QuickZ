@@ -96,13 +96,13 @@ class gesturez {
         y_angle_start := y_init
         Loop {
             if (not GetKeyState("RButton", "P")) {
-                if (IsDrawLine and gesturez.self.ShowDraw) {
-                    GUI, gesturez:Destroy
-                }
                 WinActive("ahk_id " win)
                 ElapsedTime := A_TickCount - StartTime
                 if (ElapsedTime < gesturez.self.ElapsedTime) {
                     send {%A_ThisHotkey%}
+                }
+                if (IsDrawLine and gesturez.self.ShowDraw) {
+                    GUI, gesturez:Destroy
                 }
                 if (IsDrawLine and gesturez.self.showDraw) {
                     Gdip_DeletePen(pPen)

@@ -1,16 +1,17 @@
 ﻿#Persistent
 #SingleInstance, force
 SetBatchLines, -1
-
+FileEncoding, UTF-8
 quickz.LoadPlugins()
 quickz.GenerateInclude()
 
 QZM.Listen(A_ScriptDir "\ui", 5210)
  ; The final parameter is the name of the ActiveX component.
-Gui Add, ActiveX, x0 y0 w980 h640 vWB, Shell.Explorer 
-Gui Show, w980 h640, QuickZ 配置
+;Gui Add, ActiveX, x0 y0 w980 h640 vWB, Shell.Explorer 
+;Gui Show, w980 h640, QuickZ 配置
 ; This is specific to the web browser control.
-WB.Navigate("http://127.0.0.1:5210/")  
+;WB.Navigate("http://127.0.0.1:5210/")  
+!z::reload
 
 return
 
@@ -152,16 +153,20 @@ Class QZM {
                 body := json.dump({})
                 FileAppend, % body , % QZM.self.config
             }
-            else {
-                FileRead, body, % QZM.self.config
-            }
-            res.SetBodyText(body)
+            server.ServeFile(res, QZM.self.config)
+            ; res.headers["Content-Type"] = "application/json; charset=utf-8"
             res.status := 200
         }
         else if (req.method == "POST") {
             FileDelete, % QZM.self.config
             FileAppend, % req.body , % QZM.self.config
+            quickz.SendWMData("reload")
+            res.SetBodyText("ok")
             res.status := 200
+        }
+        else {
+            res.SetBodyText("unknow request method")
+            res.status := 404
         }
     }
 

@@ -6,10 +6,29 @@
             debug := 1
             this.Plugins := {}
             this.Actions := {}
+            this.config := {}
             this.UserDir := A_ScriptDir "\User"
+            this.configFile := this.UserDir "\config.json"
             this.IncludeFile := this.UserDir "\include.ahk"
             this.LogFile := this.UserDir "\run.log"
             this.logLevel := debug
+            this.ReciveMsgTimer := ""
+        }
+    }
+
+    class Config {
+        __new(configFile:="") {
+            cf := StrLen(configfile) ? configfile : quickz.self.configFile
+            if (FileExist(cf)) {
+                FileRead, configString, %cf%
+                configJson := json.load(configString)
+                if (IsObject(configJson.menuz)) {
+                    menuz.FromObject(configJson.menuz)
+                }
+            }
+            else {
+                msgbox % configFile " not exist!"
+            }
         }
     }
 
@@ -122,6 +141,81 @@
         menuz.self := new menuz.instance()
         vimd.self := new vimd.instance()
         gesturez.self := new gesturez.instance()
+        quickz.self.config := new quickz.config()
+
+    }
+
+    OnWMCopyData() {
+        static WM_COPYDATA := 0x4A
+        INIWrite, %A_Scripthwnd%, %A_TEMP%\QZRunTime, Auto, HWND
+        INIWrite, %A_ScriptFullPath%, %A_TEMP%\QZRunTime, Auto, FullPath
+        OnMessage(WM_COPYDATA, objBindMethod(quickz, "ReciveWMData"))
+    }
+
+    ReciveWMData(wParam, lParam) {
+        Func := objBindMethod(quickz, "ParseMessage", StrGet(NumGet(lParam + 2*A_PtrSize)))
+        quickz.self.ReciveMsgTimer := Func
+        Settimer, % Func , 0 ; 使用settimer运行，方便直接return一个true过去
+        return True
+    }
+
+    ParseMessage(message) {
+        Func := quickz.self.ReciveMsgTimer
+        Settimer, % Func, off
+        if (message == "reload") {
+            quickz.reload()
+        }
+    }
+
+    start() {
+        quickz.Init()
+        quickz.OnWMCopyData()
+        quickz.LoadPlugins()
+        quickz.InitPlugins()
+    }
+
+    reload() {
+        menuz.self.menuList := {}
+        menuz.self.menuStructure := []
+        quickz.self.config := new quickz.config()
+        quickz.InitPlugins()
+    }
+
+    SendWMData(aString, IsGUI:=False)
+    {
+        Prev_DetectHiddenWindows := A_DetectHiddenWindows
+        Prev_TitleMatchMode := A_TitleMatchMode
+        DetectHiddenWindows On
+        SetTitleMatchMode 2
+        If IsGUI
+        {
+            IniRead, nHwnd, %A_TEMP%\QZRunTime, GUI, HWND
+            IniRead, FullPath, %A_TEMP%\QZRunTime, GUI, FullPath
+            Param := A_Space  aString
+        }
+        Else
+        {
+            IniRead, nHwnd, %A_TEMP%\QZRunTime, Auto, HWND
+            IniRead, FullPath, %A_TEMP%\QZRunTime, Auto, FullPath
+            ;FullPath := A_ScriptDir "\QuickZ.ahk"
+        }
+        If !WinExist("ahk_id " nHwnd)
+        {
+            Run,%A_AhkPath% "%FullPath%" %Param%
+        }
+        Else
+        {
+            VarSetCapacity(CopyDataStruct, 3*A_PtrSize, 0)  
+            SizeInBytes := (StrLen(aString) + 1) * (A_IsUnicode ? 2 : 1)
+            NumPut(SizeInBytes, CopyDataStruct, A_PtrSize) 
+            NumPut(&aString, CopyDataStruct, 2*A_PtrSize)
+            Prev_DetectHiddenWindows := A_DetectHiddenWindows
+            Prev_TitleMatchMode := A_TitleMatchMode
+            SendMessage, 0x4a, 0, &CopyDataStruct,, ahk_id %nHwnd%
+        }
+        DetectHiddenWindows %Prev_DetectHiddenWindows%  
+        SetTitleMatchMode %Prev_TitleMatchMode% 
+        return ErrorLevel  
     }
 
 
@@ -196,7 +290,5 @@
         FileAppend, % "`n" A_YYYY "/" A_MM "/" A_DD " " A_Hour ":" A_Min ":" A_Sec " [ " string.topic " ] " string.content , % quickz.self.logFile
     }
 
-    exit() {
-        gesturez.exit()
-    }
+
 }

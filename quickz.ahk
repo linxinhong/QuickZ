@@ -1,6 +1,6 @@
 ﻿#NoEnv 
 #SingleInstance, Force
-;SetBatchLines, -1
+SetBatchLines, -1
 SendMode Input
 SetWorkingDir %A_ScriptDir%
 SetKeyDelay, -1
@@ -9,6 +9,7 @@ DetectHiddenWindows On
 CoordMode, Mouse, Screen
 
 quickz.Init()
+quickz.OnWMCopyData()
 quickz.LoadPlugins()
 quickz.InitPlugins()
 
