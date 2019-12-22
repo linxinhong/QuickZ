@@ -103,19 +103,13 @@ Class QZM {
             IconNumber := req.queries["number"] is integer ? req.queries["number"] : 0
             if (FileExist(filepath)) {
                 SplitPath, filePath, filename, , ext
-                iconByResources:= A_ScriptDir "\ui\ico\" md5(filepath "|" iconNumber) ".png"
-                iconByFileType := A_ScriptDir "\ui\ico\" ext ".png"
+                gdip_tokent := Gdip_StartUp()
                 if (InStr(",exe,ico,dll,icl,", "," ext ",")) {
-                    iconFile := iconByResources
                     if (not FileExist(iconByResources)) {
-                        gdip_tokent := Gdip_StartUp()
-                        pbitmap := Gdip_createBitmapFromFile(filePath, iconNumber)
-                        Gdip_SaveBitmapToFile(pBitmap, iconFile, 100)
-                        Gdip_ShutDown(gdip_tokent)
+                        pbitmap := Gdip_createBitmapFromFile(filePath, iconNumber, 16)
                     }
                 }
                 else {
-                    iconFile := iconByFileType
                     if (not FileExist(iconByFileType)) {
                         gdip_tokent := Gdip_StartUp()
                         SHGFI_TYPENAME = 0x000000400
@@ -134,11 +128,13 @@ Class QZM {
                         SHFO := Struct(SHFILEINFO)
                         DllCall("Shell32\SHGetFileInfo" . (A_IsUnicode ? "W":"A"), "str", FilePath, "uint", 0, "ptr", SHFO[""], "uint", sizeof(SHFILEINFO), "uint", SHGFI_TYPENAME|SHGFI_DISPLAYNAME|SHGFI_ICON|SHGFI_ATTRIBUTES)
                         pBitmap := Gdip_createBitmapFromHICON(SHFO.hIcon)
-                        Gdip_SaveBitmapToFile(pBitmap, iconFile, 100)
-                        Gdip_ShutDown(gdip_tokent)
+                        ; Gdip_SaveBitmapToFile(pBitmap, iconFile, 100)
                     }
                 }
-                server.ServeFile(res, iconFile)
+                length := Gdip_SaveBitmapToStream(pbitmap, data)
+                res.SetBody(data, length)
+                res.headers["Content-Type"] := "image/png"
+                Gdip_ShutDown(gdip_tokent)
             }
             else {
                 res.status := 404

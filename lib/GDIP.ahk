@@ -1783,7 +1783,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 		VarSetCapacity(buf, BufSize, 0)
 		Loop, Parse, Sizes, |
 		{
-			DllCall("PrivateExtractIcons", "str", sFile, "int", IconNumber-1, "int", A_LoopField, "int", A_LoopField, PtrA, hIcon, PtrA, 0, "uint", 1, "uint", 0)
+			DllCall("PrivateExtractIcons", "str", sFile, "int", IconNumber, "int", A_LoopField, "int", A_LoopField, PtrA, hIcon, PtrA, 0, "uint", 1, "uint", 0)
 
 			if !hIcon
 				continue
@@ -1806,23 +1806,25 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 		if !hIcon
 			return -1
 
-		Width := NumGet(buf, 4, "int"), Height := NumGet(buf, 8, "int")
-		hbm := CreateDIBSection(Width, -Height), hdc := CreateCompatibleDC(), obm := SelectObject(hdc, hbm)
-		if !DllCall("DrawIconEx", Ptr, hdc, "int", 0, "int", 0, Ptr, hIcon, "uint", Width, "uint", Height, "uint", 0, Ptr, 0, "uint", 3)
-		{
-			DestroyIcon(hIcon)
-			return -2
-		}
+		; Width := NumGet(buf, 4, "int"), Height := NumGet(buf, 8, "int")
+		; hbm := CreateDIBSection(Width, -Height), hdc := CreateCompatibleDC(), obm := SelectObject(hdc, hbm)
+		; if !DllCall("DrawIconEx", Ptr, hdc, "int", 0, "int", 0, Ptr, hIcon, "uint", Width, "uint", Height, "uint", 0, Ptr, 0, "uint", 3)
+		; {
+		; 	DestroyIcon(hIcon)
+		; 	return -2
+		; }
+		; ListVars
 
-		VarSetCapacity(dib, 104)
-		DllCall("GetObject", Ptr, hbm, "int", A_PtrSize = 8 ? 104 : 84, Ptr, &dib) ; sizeof(DIBSECTION) = 76+2*(A_PtrSize=8?4:0)+2*A_PtrSize
-		Stride := NumGet(dib, 12, "Int"), Bits := NumGet(dib, 20 + (A_PtrSize = 8 ? 4 : 0)) ; padding
-		DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", Stride, "int", 0x26200A, Ptr, Bits, PtrA, pBitmapOld)
-		pBitmap := Gdip_CreateBitmap(Width, Height)
-		G := Gdip_GraphicsFromImage(pBitmap)
-		, Gdip_DrawImage(G, pBitmapOld, 0, 0, Width, Height, 0, 0, Width, Height)
-		SelectObject(hdc, obm), DeleteObject(hbm), DeleteDC(hdc)
-		Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmapOld)
+		; VarSetCapacity(dib, 104)
+		; DllCall("GetObject", Ptr, hbm, "int", A_PtrSize = 8 ? 104 : 84, Ptr, &dib) ; sizeof(DIBSECTION) = 76+2*(A_PtrSize=8?4:0)+2*A_PtrSize
+		; Stride := NumGet(dib, 12, "Int"), Bits := NumGet(dib, 20 + (A_PtrSize = 8 ? 4 : 0)) ; padding
+		; DllCall("gdiplus\GdipCreateBitmapFromScan0", "int", Width, "int", Height, "int", Stride, "int", 0x26200A, Ptr, Bits, PtrA, pBitmapOld)
+		; pBitmap := Gdip_CreateBitmap(Width, Height)
+		; G := Gdip_GraphicsFromImage(pBitmap)
+		; , Gdip_DrawImage(G, pBitmapOld, 0, 0, Width, Height, 0, 0, Width, Height)
+		; SelectObject(hdc, obm), DeleteObject(hbm), DeleteDC(hdc)
+		; Gdip_DeleteGraphics(G), Gdip_DisposeImage(pBitmapOld)
+		pBitmap := Gdip_CreateBitmapFromHICON(hIcon)
 		DestroyIcon(hIcon)
 	}
 	else

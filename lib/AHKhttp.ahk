@@ -68,6 +68,12 @@ class HttpServer
         response.headers["Content-Type"] := this.GetMimeType(file)
     }
 
+    ServeBitmap(ByRef response, pbitmap) {
+        length := Gdip_SaveBitmapToStream(pbitmap, data)
+        response.SetBody(data, length)
+        response.headers["Content-Type"] := "image/png"
+    }
+
     ServeRaw(ByRef response, rawdata) {
         response.SetBody(rawdata, (rawdata))
     }
