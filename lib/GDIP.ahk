@@ -1775,7 +1775,7 @@ Gdip_CreateBitmapFromFile(sFile, IconNumber=1, IconSize="")
 	, PtrA := A_PtrSize ? "UPtr*" : "UInt*"
 
 	SplitPath, sFile,,, ext
-	if ext in exe,dll
+	if ext in exe,dll,icl
 	{
 		Sizes := IconSize ? IconSize : 256 "|" 128 "|" 64 "|" 48 "|" 32 "|" 16
 		BufSize := 16 + (2*(A_PtrSize ? A_PtrSize : 4))
