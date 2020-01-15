@@ -468,6 +468,9 @@ class pumAPI extends pumAPI_base
       return 0
     if this.IsInteger( pPath )                 ;if icon handle were passed
       return this.IconCopy( pPath, pSize, 1, 0 )  ;will not delete original icon handle
+    if ( this.PathGetExt(this.IconGetPath(pPath)) ~= "i)^(png|jpg)$") {
+       pPath := this.IconGetPath(pPath)
+    }
     if ( this.IconGetIndex( pPath ) = "" 
       && !( this.PathGetExt( pPath ) ~= "i)^(ico|cur|ani)$" ) )
     {

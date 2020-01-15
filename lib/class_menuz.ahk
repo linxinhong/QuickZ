@@ -58,7 +58,7 @@
                     parentMenu.add()
                 }
                 else if (not menuz.CheckDynamic(item.name, parentMenu)) {
-                    if (item.HasKey("sub") and IsObject(item["sub"])) {
+                    if (item.HasKey("sub") and IsObject(item["sub"][1])) {
                         sm := menuz.self.createMenu()
                         menuz.Build(sm, item.sub, env)
                         item.submenu := sm

@@ -9,9 +9,10 @@ QZM.Listen(A_ScriptDir "\ui", 5210)
 ;Gui Add, ActiveX, x0 y0 w980 h640 vWB, Shell.Explorer 
 ;Gui Show, w980 h640, QuickZ 配置
 ;WB.Navigate("http://127.0.0.1:5210/")  
-run http://127.0.0.1:5210
+;run http://127.0.0.1:5210
 
 return
+!z::reload
 
 Class QZM {
 

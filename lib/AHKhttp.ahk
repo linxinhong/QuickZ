@@ -41,7 +41,7 @@ class HttpServer
             info := StrSplit(LTrim(SubStr(data, StrLen(type) + 1)), " ")
 
             for i, ext in info {
-                this.mimes[ext] := type
+                this.mimes[Trim(ext, "`n`r")] := type
             }
         }
         return true
