@@ -22,9 +22,9 @@
         Loop % menuList.MaxIndex()
         {
             item := menuList[A_Index]
-            item.filter := menuz.ReplaceVar(item.filter)
             allowAdd := true
             if ( StrLen(item.filter) ) {
+                item.filter := menuz.ReplaceVar(item.filter)
                 if (env.isFileMulti and not RegExMatch(item.filter, "i){only:(.*)}")) {
                     allowAdd := env.JudgeFilterTag("{only:file}")
                 }
@@ -37,7 +37,7 @@
                         if (RegExMatch(tagMatch2, "^[\s,]$")) {
                             Operator := "AND"
                         }
-                        else if (RegExMatch(tagMatch2, "^[\s|]$")) {
+                        else if (RegExMatch(tagMatch2, "^[|]$")) {
                             Operator := "OR"
                         }
                         allowAdd := (Operator == "AND") ? (allowAdd and tagResult) : (allowAdd or tagResult)
@@ -45,6 +45,16 @@
                     else {
                         break
                     }
+                }
+            }
+            else if (IsObject(item.filter)) {
+                Operator := "and"
+                Loop % item.filter.MaxIndex()
+                {
+                    filter := menuz.ReplaceVar(item.filter[A_Index])
+                    tagResult := env.JudgeFilterTag(filter.string)
+                    allowAdd := (Operator == "and") ? (allowAdd and tagResult) : (allowAdd or tagResult)
+                    Operator := filter.logic
                 }
             }
             if (allowAdd) {

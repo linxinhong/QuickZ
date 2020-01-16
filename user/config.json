@@ -1,1 +1,57 @@
-﻿{"menuz":[{"name":"首菜单2","icon":"User\\icons\\81bfdbb5ff8539052de920936f7eb3e6.png:0","exec":"notepad.exe","param":"","filter":"","sub":[]},{"name":"test4","icon":"User\\icons\\8ee23121839b870e4a7beb42b68412ed.png:0","filter":"{ext:=ahk}","exec":"notepad.exe","param":"D:\\Git\\ahk\\quickz-design\\.gitignore"},{"name":"第二菜单","icon":"","filter":"","exec":"","param":""},{"name":"第三菜单","sub":[{"name":"test5","icon":"C:\\Windows\\System32\\Shell32.dll:22"},{"name":"test6","sub":[{"name":"test7","exec":"jklfjdslkfjkjdskflsjafdlksa"},{"name":"test8","icon":"C:\\Windows\\System32\\Shell32.dll:23"}]}],"icon":"","filter":"","exec":"","param":""}],"setting":{}}
+﻿{
+    "menuz": [{
+        "name": "首菜单2",
+        "icon": "User\\icons\\81bfdbb5ff8539052de920936f7eb3e6.png:0",
+        "exec": "notepad.exe",
+        "param": "",
+        "filter": [{
+            "name": "常用文本",
+            "string": "{ext:=ahk,js,txt,ini}",
+            "color": "",
+            "logic": "or"
+        },
+        {
+            "name": "扩展名等于py",
+            "string": "{ext:=py}",
+            "logic": "and"
+        }
+    ],
+        "sub": []
+    }, {
+        "name": "test4",
+        "icon": "C:\\windows\\system32\\shell32.dll:21",
+        "filter": "{ext:=ahk}",
+        "exec": "notepad.exe",
+        "param": "D:\\Git\\ahk\\quickz-design\\.gitignore"
+    }, {
+        "sep": true
+    }, {
+        "name": "第二菜单",
+        "icon": "",
+        "filter": "",
+        "exec": "",
+        "param": ""
+    }, {
+        "name": "第三菜单",
+        "sub": [{
+            "name": "test5",
+            "icon": "C:\\Windows\\System32\\Shell32.dll:22"
+        }, {
+            "name": "test6",
+            "sub": [{
+                "name": "test7",
+                "exec": "jklfjdslkfjkjdskflsjafdlksa"
+            }, {
+                "name": "test8",
+                "icon": "C:\\Windows\\System32\\Shell32.dll:23"
+            }]
+        }],
+        "icon": "",
+        "filter": "",
+        "exec": "",
+        "param": ""
+    }],
+    "setting": {
+        "icons_search_history": ["C:\\windows\\system32\\shell32.dll:21", "C:\\windows\\system32\\shell32.dll:20"]
+    }
+}
